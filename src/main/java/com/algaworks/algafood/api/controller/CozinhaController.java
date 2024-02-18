@@ -33,6 +33,16 @@ public class CozinhaController {
 
 
     @GetMapping("/{id}")
+    public ResponseEntity<Cozinha> buscar(@PathVariable long id){
+        Cozinha cozinnha = cozinhaRepository.buscar(id);
+        if(cozinnha != null){
+            return ResponseEntity.ok(cozinnha);
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    //@GetMapping("/{id}")
     public ResponseEntity<Cozinha> getById(@PathVariable Long id){
 
         Cozinha cozinha = cozinhaRepository.buscar(id);
@@ -47,5 +57,11 @@ public class CozinhaController {
                 .status(HttpStatus.NOT_FOUND)
                 .headers(headers)
                 .build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha){
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaRepository.salvar(cozinha));
     }
 }
