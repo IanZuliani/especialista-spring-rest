@@ -5,7 +5,10 @@ import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +51,26 @@ public class RestauranteController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editar(@PathVariable long id, @RequestBody Restaurante restaurante){
+        try{
+            Restaurante restauranteAtual = restauranteRepository.buscar(id);
+
+             if (restauranteAtual != null){
+
+                BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
+                restauranteAtual = restauranteRepository.salvar(restauranteAtual);
+                return ResponseEntity.ok(restauranteAtual);
+            }
+            return ResponseEntity.notFound().build();
+        }catch (DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        }
+
+
+    }
+
 
 }
