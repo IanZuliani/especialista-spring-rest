@@ -5,14 +5,17 @@ import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +44,7 @@ public class RestauranteController {
         return ResponseEntity.notFound().build();
     }
 
-    @RequestMapping
+    @PostMapping
     //@ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionar (@RequestBody Restaurante restaurante){
         try {
@@ -73,22 +76,35 @@ public class RestauranteController {
 
     }
 
-    @PatchMapping("/id")
-    public ResponseEntity<?> atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos){
-        Restaurante restauranteAtual = restauranteRepository.buscar(id);
+    @PatchMapping("/{restauranteId}")
+    public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
+                                              @RequestBody Map<String, Object> campos) {
+        Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+        System.out.println("Entrei no metodo");
 
         if(restauranteAtual == null){
+            System.out.println("aqui");
             return ResponseEntity.notFound().build();
         }
 
         merge(campos, restauranteAtual);
 
-        return editar(id, restauranteAtual);
+        return editar(restauranteId, restauranteAtual);
     }
 
-    private static void merge(Map<String, Object> campos, Restaurante restauranteDestino) {
-        campos.forEach((nome, valor)->{
-            System.out.println(nome +" = "+ valor);
+    private static void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);
+
+        dadosOrigem.forEach((nome, valor)->{
+            Field field = ReflectionUtils.findField(Restaurante.class, nome);
+            field.setAccessible(true);
+
+            Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
+
+            //System.out.println(nome +" = "+ valor);
+            ReflectionUtils.setField(field, restauranteDestino, novoValor);
+
         });
     }
 
