@@ -30,15 +30,15 @@ public class RestauranteController {
     private CadastroRestauranteService cadastroRestaurante;
     @GetMapping
     public List<Restaurante> listar(){
-        return restauranteRepository.listar();
+        return restauranteRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Restaurante> buscar(@PathVariable long id){
-        Restaurante restaurante = restauranteRepository.buscar(id);
+        var restaurante = restauranteRepository.findById(id);
 
-        if(restaurante != null){
-            return ResponseEntity.ok(restaurante);
+        if(restaurante.isPresent()){
+            return ResponseEntity.ok(restaurante.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -59,13 +59,13 @@ public class RestauranteController {
     @PutMapping("/{id}")
     public ResponseEntity<?> editar(@PathVariable long id, @RequestBody Restaurante restaurante){
         try{
-            Restaurante restauranteAtual = restauranteRepository.buscar(id);
+            var restauranteAtual = restauranteRepository.findById(id);
 
-             if (restauranteAtual != null){
+             if (restauranteAtual.isPresent()){
 
-                BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
-                restauranteAtual = restauranteRepository.salvar(restauranteAtual);
-                return ResponseEntity.ok(restauranteAtual);
+                BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id");
+                var restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
+                return ResponseEntity.ok(restauranteSalvo);
             }
             return ResponseEntity.notFound().build();
         }catch (DataIntegrityViolationException e) {
@@ -79,11 +79,10 @@ public class RestauranteController {
     @PatchMapping("/{restauranteId}")
     public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
                                               @RequestBody Map<String, Object> campos) {
-        Restaurante restauranteAtual = restauranteRepository.buscar(restauranteId);
+        var restauranteAtual = restauranteRepository.findById(restauranteId).orElse(null);
         System.out.println("Entrei no metodo");
 
         if(restauranteAtual == null){
-            System.out.println("aqui");
             return ResponseEntity.notFound().build();
         }
 

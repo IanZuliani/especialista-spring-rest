@@ -11,6 +11,8 @@ import com.algaworks.algafood.domain.service.CadastroCidadeService;
 import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
@@ -22,10 +24,10 @@ public class CidadeController {
 
     @GetMapping("/{cidadeId}")
     public ResponseEntity<Cidade> buscar(@PathVariable Long cidadeId) {
-        Cidade cidade = cidadeRepository.buscar(cidadeId);
+        var cidade = cidadeRepository.findById(cidadeId);
 
-        if (cidade != null) {
-            return ResponseEntity.ok(cidade);
+        if(cidade.isPresent()){
+            return ResponseEntity.ok(cidade.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -47,13 +49,13 @@ public class CidadeController {
     @PutMapping("/{cidadeAId}")
     public ResponseEntity<Cidade> atualizar(@PathVariable Long cidadeId,
                                             @RequestBody Cidade cidade) {
-        Cidade cidadeAtual = cidadeRepository.buscar(cidadeId);
+        var cidadeAtual = cidadeRepository.findById(cidadeId);
 
-        if (cidadeAtual != null) {
-            BeanUtils.copyProperties(cidade, cidadeAtual, "id");
+        if (cidadeAtual.isPresent()) {
+            BeanUtils.copyProperties(cidade, cidadeAtual.get(), "id");
 
-            cidadeAtual = cadastroCidade.salvar(cidadeAtual);
-            return ResponseEntity.ok(cidadeAtual);
+           var cidadeSalva = cadastroCidade.salvar(cidadeAtual.get());
+            return ResponseEntity.ok(cidadeSalva);
         }
 
         return ResponseEntity.notFound().build();
