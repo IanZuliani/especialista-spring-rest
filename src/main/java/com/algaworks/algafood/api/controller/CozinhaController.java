@@ -44,7 +44,7 @@ public class CozinhaController {
     //@GetMapping("/{id}")
     public ResponseEntity<Cozinha> getById(@PathVariable Long id){
 
-        Cozinha cozinha = cozinhaRepository.buscar(id);
+        Cozinha cozinha = cozinhaRepository.
         //return ResponseEntity.status(HttpStatus.OK).body(cozinha);
         //return ResponseEntity.status(HttpStatus.OK).build();
         //return ResponseEntity.ok(cozinha);
