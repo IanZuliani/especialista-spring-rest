@@ -21,7 +21,7 @@ public class AlteracaoMain {
         cozinha1.setNome("asdsadsad");
 
 
-        cozinhas.salvar(cozinha1);
+        //cozinhas.salvar(cozinha1);
 
     }
 }

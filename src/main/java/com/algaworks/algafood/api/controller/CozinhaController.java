@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 //@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -28,14 +29,14 @@ public class CozinhaController {
     //@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @GetMapping
     public List<Cozinha> listar(){
-       return cozinhaRepository.listar();
+        return cozinhaRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Cozinha> buscar(@PathVariable long id){
-        Cozinha cozinnha = cozinhaRepository.buscar(id);
-        if(cozinnha != null){
-            return ResponseEntity.ok(cozinnha);
+        Optional<Cozinha> cozinnha = cozinhaRepository.findById(id);
+        if(cozinnha.isPresent()){
+            return ResponseEntity.ok(cozinnha.get());
         }
         return ResponseEntity.notFound().build();
 
@@ -44,7 +45,7 @@ public class CozinhaController {
     //@GetMapping("/{id}")
     public ResponseEntity<Cozinha> getById(@PathVariable Long id){
 
-        Cozinha cozinha = cozinhaRepository.
+        Optional<Cozinha> cozinha = cozinhaRepository.findById(id);
         //return ResponseEntity.status(HttpStatus.OK).body(cozinha);
         //return ResponseEntity.status(HttpStatus.OK).build();
         //return ResponseEntity.ok(cozinha);
@@ -66,14 +67,14 @@ public class CozinhaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cozinha> atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha){
-        Cozinha cozinhaAtual = cozinhaRepository.buscar(id);
+        Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(id);
 
         if (cozinhaAtual != null) {
             //cozinhaAtual.setNome(cozinha.getNome());
-            BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+            BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 
-            cozinhaAtual = cadastroCozinha.salvar(cozinhaAtual);
-            return ResponseEntity.ok(cozinhaAtual);
+            Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
+            return ResponseEntity.ok(cozinhaSalva);
         }
         return ResponseEntity.notFound().build();
 
