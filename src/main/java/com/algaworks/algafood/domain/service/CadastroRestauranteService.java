@@ -16,10 +16,11 @@ public class CadastroRestauranteService {
     @Autowired
     private RestauranteRepository restauranteRepository;
 
+    @Autowired
     private CozinhaRepository cozinhaRepository;
 
     public Restaurante salvar(Restaurante restaurante){
-        Long cozinhaID = restaurante.getCozinha().getId();
+        var cozinhaID = restaurante.getCozinha().getId();
         var cozinha = cozinhaRepository.findById(cozinhaID)
                 .orElseThrow( ()-> new EndidadeNaoEncontradaException(
                         String.format("Nao existe cadastro de cozinha com o codigo %d",cozinhaID)));
