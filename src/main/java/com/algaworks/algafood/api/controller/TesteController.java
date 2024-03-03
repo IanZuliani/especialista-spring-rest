@@ -31,17 +31,17 @@ public class TesteController {
         return cozinhaRepository.findBynomeContaining(nome);
     }
 
-    @GetMapping("/restaurantes/por-taxa-frete")
-    public List<Restaurante> restaurantesPorTaxaFrete(
-            BigDecimal taxaInicial, BigDecimal taxaFinal) {
-        return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
-    }
-
-    @GetMapping("/restaurantes/por-nome")
-    public List<Restaurante> restaurantesPorTaxaFrete(
-            String nome, Long id) {
-        return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
-    }
+//    @GetMapping("/restaurantes/por-taxa-frete")
+//    public List<Restaurante> restaurantesPorTaxaFrete(
+//            BigDecimal taxaInicial, BigDecimal taxaFinal) {
+//        return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+//    }
+//
+//    @GetMapping("/restaurantes/por-nome")
+//    public List<Restaurante> restaurantesPorTaxaFrete(
+//            String nome, Long id) {
+//        return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
+//    }
 
     @GetMapping("/restaurantes/por-nome-id")
     public List<Restaurante> restaurantePorNomeId(
