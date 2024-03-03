@@ -64,7 +64,7 @@ public class RestauranteController {
              if (restauranteAtual.isPresent()){
 
                 BeanUtils.copyProperties(restaurante, restauranteAtual.get(),
-                        "id", "formaPagamento", "endereco","dataCadastro");
+                        "id", "formaPagamento", "endereco","dataCadastro", "produtos");
                 var restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
                 return ResponseEntity.ok(restauranteSalvo);
             }
