@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CadastroCozinhaService {

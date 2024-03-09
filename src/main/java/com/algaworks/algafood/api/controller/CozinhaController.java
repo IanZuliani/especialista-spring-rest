@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebInputException;
 
 import java.util.List;
 import java.util.Optional;
@@ -96,7 +98,12 @@ public class CozinhaController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable Long id) {
-        cadastroCozinha.excluir(id);
+        try{
+            cadastroCozinha.excluir(id);
+        }catch (EndidadeNaoEncontradaException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+            //throw new ServerWebInputException(e.getMessage());
+        }
     }
 
 
