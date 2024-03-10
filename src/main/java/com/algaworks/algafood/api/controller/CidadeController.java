@@ -35,10 +35,9 @@ public class CidadeController {
 
     }
 
-    @PutMapping("/{cidadeAId}")
-    public Cidade atualizar(@PathVariable Long cidadeId,
-                                            @RequestBody Cidade cidade) {
-        var cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
+    @PutMapping("/{id}")
+    public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
+        var cidadeAtual = cadastroCidade.buscarOuFalhar(id);
 
         BeanUtils.copyProperties(cidade, cidadeAtual, "id");
 
