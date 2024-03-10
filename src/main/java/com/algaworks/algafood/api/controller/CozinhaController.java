@@ -35,12 +35,8 @@ public class CozinhaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cozinha> buscar(@PathVariable long id){
-        Optional<Cozinha> cozinnha = cozinhaRepository.findById(id);
-        if(cozinnha.isPresent()){
-            return ResponseEntity.ok(cozinnha.get());
-        }
-        return ResponseEntity.notFound().build();
+    public Cozinha buscar(@PathVariable long id){
+        return cadastroCozinha.buscarOuFalhar(id);
 
     }
 
@@ -68,32 +64,13 @@ public class CozinhaController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha){
-        Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(id);
+    public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha){
+        var cozinhaAtual = cadastroCozinha.buscarOuFalhar(id);
 
-        if (cozinhaAtual != null) {
-            //cozinhaAtual.setNome(cozinha.getNome());
-            BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
+        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 
-            Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
-            return ResponseEntity.ok(cozinhaSalva);
-        }
-        return ResponseEntity.notFound().build();
-
+        return cadastroCozinha.salvar(cozinhaAtual);
     }
-
-   /* @DeleteMapping("/{id}")
-    public ResponseEntity<?> remover(@PathVariable Long id) {
-        try {
-            cadastroCozinha.excluir(id);
-            return ResponseEntity.noContent().build();
-        }catch (EntidadeEmUsoException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e);
-        }catch (EndidadeNaoEncontradaException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e);
-        }
-
-    }*/
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -101,9 +78,4 @@ public class CozinhaController {
         cadastroCozinha.excluir(id);
     }
 
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

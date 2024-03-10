@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class CadastroCozinhaService {
 
+    public static final String MSG_COZINHA_NAO_ENCONTRADA = "Nao existe um cadastro de cozinha com o codigo %d ";
+    public static final String MSG_COZINHA_EM_USO = "Cozinha de codigo %d nao pode ser removida pos esta emuso";
     @Autowired
     private CozinhaRepository cozinhaRepository;
     public Cozinha salvar(Cozinha cozinha){
@@ -26,10 +28,16 @@ public class CadastroCozinhaService {
             cozinhaRepository.deleteById(id);
         }catch (EmptyResultDataAccessException e){
             throw new EndidadeNaoEncontradaException(
-                    String.format("Nao existe um cadastro de cozinha com o codigo %d ", id));
+                    String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
         }catch (DataIntegrityViolationException e){
            throw new EntidadeEmUsoException(
-                   String.format("Cozinha de codigo %d nao pode ser removida pos esta emuso", id));
+                   String.format(MSG_COZINHA_EM_USO, id));
         }
+    }
+
+    public Cozinha buscarOuFalhar(Long cozinhaId){
+        return cozinhaRepository.findById(cozinhaId)
+                .orElseThrow(()-> new EndidadeNaoEncontradaException(
+                        String.format(MSG_COZINHA_NAO_ENCONTRADA, cozinhaId)));
     }
 }
