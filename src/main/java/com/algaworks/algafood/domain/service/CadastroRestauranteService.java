@@ -13,20 +13,30 @@ import java.util.Optional;
 @Service
 public class CadastroRestauranteService {
 
+    public static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Nao existe cadastro de cozinha com o codigo %d";
     @Autowired
     private RestauranteRepository restauranteRepository;
 
     @Autowired
-    private CozinhaRepository cozinhaRepository;
+    private CadastroCozinhaService cozinhaService;
 
     public Restaurante salvar(Restaurante restaurante){
         var cozinhaID = restaurante.getCozinha().getId();
-        var cozinha = cozinhaRepository.findById(cozinhaID)
+
+        var cozinha = cozinhaService.buscarOuFalhar(cozinhaID);
+        /*var cozinha = cozinhaRepository.findById(cozinhaID)
                 .orElseThrow( ()-> new EndidadeNaoEncontradaException(
-                        String.format("Nao existe cadastro de cozinha com o codigo %d",cozinhaID)));
+                        String.format(MSG_RESTAURANTE_NAO_ENCONTRADO,cozinhaID)));*/
 
         restaurante.setCozinha(cozinha);
         return restauranteRepository.save(restaurante);
+    }
+
+
+    public Restaurante buscarOuFalhar(Long id){
+        return restauranteRepository.findById(id).orElseThrow(()-> new EndidadeNaoEncontradaException(
+                String.format(MSG_RESTAURANTE_NAO_ENCONTRADO,id)
+        ));
     }
 
 }

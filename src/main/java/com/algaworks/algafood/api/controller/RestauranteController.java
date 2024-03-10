@@ -35,58 +35,33 @@ public class RestauranteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable long id){
-        var restaurante = restauranteRepository.findById(id);
+    public Restaurante buscar(@PathVariable long id){
+        return cadastroRestaurante.buscarOuFalhar(id);
 
-        if(restaurante.isPresent()){
-            return ResponseEntity.ok(restaurante.get());
-        }
-
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    //@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> adicionar (@RequestBody Restaurante restaurante){
-        try {
-            Restaurante restauranteSalvo =  cadastroRestaurante.salvar(restaurante);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(restauranteSalvo);
-        }catch (EndidadeNaoEncontradaException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public Restaurante adicionar (@RequestBody Restaurante restaurante){
+        return cadastroRestaurante.salvar(restaurante);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@PathVariable long id, @RequestBody Restaurante restaurante){
-        try{
-            var restauranteAtual = restauranteRepository.findById(id);
+    public Restaurante editar(@PathVariable long id, @RequestBody Restaurante restaurante){
 
-             if (restauranteAtual.isPresent()){
+            var restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
 
-                BeanUtils.copyProperties(restaurante, restauranteAtual.get(),
+                BeanUtils.copyProperties(restaurante, restauranteAtual,
                         "id", "formaPagamento", "endereco","dataCadastro", "produtos");
-                var restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
-                return ResponseEntity.ok(restauranteSalvo);
-            }
-            return ResponseEntity.notFound().build();
-        }catch (DataIntegrityViolationException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
 
+                return cadastroRestaurante.salvar(restauranteAtual);
 
     }
 
     @PatchMapping("/{restauranteId}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
+    public Restaurante atualizarParcial(@PathVariable Long restauranteId,
                                               @RequestBody Map<String, Object> campos) {
-        var restauranteAtual = restauranteRepository.findById(restauranteId).orElse(null);
-        System.out.println("Entrei no metodo");
-
-        if(restauranteAtual == null){
-            return ResponseEntity.notFound().build();
-        }
+        Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
 
         merge(campos, restauranteAtual);
 
