@@ -6,7 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 //public class EndidadeNaoEncontradaException extends ResponseStatusException {
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Entidade nao encontrada")
-public class EndidadeNaoEncontradaException extends RuntimeException {
+public class EndidadeNaoEncontradaException extends NegocioExceptional {
     private static final long serialVersionUID = 1L;
 
 //    public EndidadeNaoEncontradaException(HttpStatus status, String reason){
