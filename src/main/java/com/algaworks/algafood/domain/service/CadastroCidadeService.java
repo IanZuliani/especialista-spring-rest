@@ -2,6 +2,7 @@ package com.algaworks.algafood.domain.service;
 
 import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
+import com.algaworks.algafood.domain.exception.NegocioExceptional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
@@ -25,8 +26,8 @@ public class CadastroCidadeService {
         Long estadoId = cidade.getEstado().getId();
 
         var estado = cadastroEstado.buscarOuFalhar(estadoId);
-        /* var estado = estadoRepository.findById(estadoId).orElseThrow(
-                ()->new EndidadeNaoEncontradaException(
+      /*var estado = estadoRepository.findById(estadoId).orElseThrow(
+                ()->new EntidadeNaoEncontradaExptional(
                         String.format("Não existe cadastro de estado com código %d", estadoId))
         );*/
         cidade.setEstado(estado);
