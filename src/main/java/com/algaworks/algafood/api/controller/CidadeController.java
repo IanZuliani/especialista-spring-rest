@@ -62,24 +62,5 @@ public class CidadeController {
             cadastroCidade.excluir(cidadeAId);
 
     }
-    @ExceptionHandler(EndidadeNaoEncontradaException.class)
-    public ResponseEntity<?> tratarEstadoNaoEncontradoException(EndidadeNaoEncontradaException e){
-        var problema = Problema.builder()
-                .dataHora(LocalDateTime.now())
-                .mensagem(e.getMessage()).build();
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(problema);
-    }
-
-    @ExceptionHandler(NegocioExceptional.class)
-    public ResponseEntity<?> tratarNegocioExceptional(NegocioExceptional e){
-        var problema = Problema.builder()
-                .dataHora(LocalDateTime.now())
-                .mensagem(e.getMessage()).build();
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(problema);
-    }
 
 }
