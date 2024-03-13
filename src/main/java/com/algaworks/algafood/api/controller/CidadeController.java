@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.controller;
 
+import com.algaworks.algafood.api.exceptionHandler.Problema;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioExceptional;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -13,6 +14,7 @@ import com.algaworks.algafood.domain.service.CadastroCidadeService;
 import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -60,6 +62,24 @@ public class CidadeController {
             cadastroCidade.excluir(cidadeAId);
 
     }
+    @ExceptionHandler(EndidadeNaoEncontradaException.class)
+    public ResponseEntity<?> tratarEstadoNaoEncontradoException(EndidadeNaoEncontradaException e){
+        var problema = Problema.builder()
+                .dataHora(LocalDateTime.now())
+                .mensagem(e.getMessage()).build();
 
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(problema);
+    }
+
+    @ExceptionHandler(NegocioExceptional.class)
+    public ResponseEntity<?> tratarNegocioExceptional(NegocioExceptional e){
+        var problema = Problema.builder()
+                .dataHora(LocalDateTime.now())
+                .mensagem(e.getMessage()).build();
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(problema);
+    }
 
 }
