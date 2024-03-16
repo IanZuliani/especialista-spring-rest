@@ -3,6 +3,8 @@ package com.algaworks.algafood.api.exceptionHandler;
 import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.NegocioExceptional;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +15,20 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+
+        if(rootCause instanceof InvalidFormatException){
+            return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
+        }
+
 
         var problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
         String detail = "O corpo da requisicao esta invalido, verifique erro de sintaxe";
@@ -27,6 +37,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
        // return super.handleHttpMessageNotReadable(ex, headers, status, request);
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ex.getPath().forEach(ref -> System.out.println(ref.getFieldName()));
+
+        var path = ex.getPath().stream()
+                .map(ref -> ref.getFieldName())
+                .collect(Collectors.joining("."));
+
+
+        ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
+        var detail = String.format("A propriedade '%s' recebeu o valor '%s'," +
+                "que e um valor Invalido. Corrija e informe um valor compativel com o tipo %s .",
+                path, ex.getValue(), ex.getTargetType().getSimpleName());
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+        return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
     @ExceptionHandler(EndidadeNaoEncontradaException.class)
