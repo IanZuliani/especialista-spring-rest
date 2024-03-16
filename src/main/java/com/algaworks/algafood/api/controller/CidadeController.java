@@ -1,6 +1,5 @@
 package com.algaworks.algafood.api.controller;
 
-import com.algaworks.algafood.api.exceptionHandler.Problema;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioExceptional;
 import com.algaworks.algafood.domain.model.Cidade;
@@ -8,14 +7,8 @@ import com.algaworks.algafood.domain.repository.CidadeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.algaworks.algafood.domain.service.CadastroCidadeService;
-import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cidades")
