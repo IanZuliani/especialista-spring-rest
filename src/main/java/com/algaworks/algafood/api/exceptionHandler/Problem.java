@@ -16,5 +16,6 @@ public class Problem {
     private String detail;//descricao expecifica sobre a ocorencia do problema gerado
 
     private String userMenssage;
+    private LocalDateTime timestamp;
 
 }
