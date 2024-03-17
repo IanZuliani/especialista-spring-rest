@@ -15,5 +15,6 @@ public class Problem {
     private String title;//descricao Generica Tipo do problema, mesmo para todos os controllers com mesmo erro
     private String detail;//descricao expecifica sobre a ocorencia do problema gerado
 
+    private String userMenssage;
 
 }
