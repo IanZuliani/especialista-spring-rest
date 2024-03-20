@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebInputException;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +59,7 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha){
+    public ResponseEntity<Cozinha> adicionar(@RequestBody @Valid Cozinha cozinha){
         return ResponseEntity.status(HttpStatus.CREATED).body(cadastroCozinha.salvar(cozinha));
     }
 
