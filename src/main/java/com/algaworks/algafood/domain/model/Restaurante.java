@@ -29,7 +29,7 @@ public class Restaurante {
 
     //@NotNull
     //@NotEmpty
-    @NotBlank
+    @NotBlank(message = "Nome E obrigatorio")
     private String nome;
 
     //@DecimalMin("0")
