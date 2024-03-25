@@ -64,7 +64,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
-    public Restaurante editar(@PathVariable long id, @RequestBody Restaurante restaurante){
+    public Restaurante editar(@PathVariable long id, @RequestBody @Valid Restaurante restaurante){
 
         var restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
 

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.algaworks.algafood.domain.service.CadastroEstadoService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -39,13 +40,13 @@ public class EstadoController {
     }
 
     @PostMapping
-    public ResponseEntity<Estado> adicionar(@RequestBody Estado estado){
+    public ResponseEntity<Estado> adicionar(@RequestBody @Valid Estado estado){
             Estado estadoSalvo = cadastroEstado.salvar(estado);
             return ResponseEntity.ok(estadoSalvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody Estado estado){
+    public ResponseEntity<?> editar(@PathVariable Long id, @RequestBody @Valid Estado estado){
 
             var estadoAtual = cadastroEstado.buscarOuFalhar(id);
             BeanUtils.copyProperties(estado, estadoAtual, "id");
