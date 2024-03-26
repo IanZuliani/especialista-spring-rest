@@ -33,6 +33,8 @@ public class Restaurante {
     private String nome;
 
     //@DecimalMin("0")
+    //Adicionaremos @NotNull na propriedade taxaFrete, pois o @PositiveOrZero não valida se é nulo
+    @NotNull
     @PositiveOrZero
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
