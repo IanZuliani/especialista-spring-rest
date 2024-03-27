@@ -1,6 +1,7 @@
 package com.algaworks.algafood.domain.model;
 
 import com.algaworks.algafood.core.validation.Groups;
+import com.algaworks.algafood.core.validation.TaxaFrete;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +36,8 @@ public class Restaurante {
     //@DecimalMin("0")
     //Adicionaremos @NotNull na propriedade taxaFrete, pois o @PositiveOrZero não valida se é nulo
     @NotNull
-    @PositiveOrZero
+    //@PositiveOrZero
+    @TaxaFrete
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
