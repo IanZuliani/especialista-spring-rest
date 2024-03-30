@@ -1,4 +1,5 @@
 package com.algaworks.algafood;
+
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.model.Cozinha;
@@ -13,13 +14,13 @@ import javax.validation.ConstraintViolationException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-public class CadastroCozinhaIntegrationTests {
+public class CadastroCozinhaIT {
 
     @Autowired
     private CadastroCozinhaService service;
 
     @Test
-    public void deveAtribuirId_QuandoCadastrarCozinhaComDadosCorretos(){
+    public void deveAtribuirId_QuandoCadastrarCozinhaComDadosCorretos() {
         //cenario
         var novaCozinha = new Cozinha();
         novaCozinha.setNome("Cozinha Chinesa");
@@ -34,33 +35,30 @@ public class CadastroCozinhaIntegrationTests {
     }
 
     @Test
-    public void deveFalhar_QuandoCadastrarCozinhaSemNome(){
+    public void deveFalhar_QuandoCadastrarCozinhaSemNome() {
         var cozinha = new Cozinha();
         cozinha.setNome(null);
 
-        ConstraintViolationException erroEsperado = Assertions.assertThrows(ConstraintViolationException.class,
-                ()->{
-                    service.salvar(cozinha);
-                });
+        ConstraintViolationException erroEsperado = Assertions.assertThrows(ConstraintViolationException.class, () -> {
+            service.salvar(cozinha);
+        });
         assertThat(erroEsperado).isNotNull();
     }
 
     @Test
-    public void deveFalhar_QuandoExcluirCozinhaEmUso(){
-        EntidadeEmUsoException erroEsperado = Assertions.assertThrows(EntidadeEmUsoException.class,
-                ()->{
-                    service.excluir(1L);
-                });
+    public void deveFalhar_QuandoExcluirCozinhaEmUso() {
+        EntidadeEmUsoException erroEsperado = Assertions.assertThrows(EntidadeEmUsoException.class, () -> {
+            service.excluir(1L);
+        });
         assertThat(erroEsperado).isNotNull();
     }
 
     @Test
-    public void deveFalhar_QuandoExcluirCozinhaInexistente(){
+    public void deveFalhar_QuandoExcluirCozinhaInexistente() {
 
-        CozinhaNaoEncontradoException erroEsperado = Assertions.assertThrows(CozinhaNaoEncontradoException.class,
-                ()->{
-                    service.excluir(100L);
-                });
+        CozinhaNaoEncontradoException erroEsperado = Assertions.assertThrows(CozinhaNaoEncontradoException.class, () -> {
+            service.excluir(100L);
+        });
         assertThat(erroEsperado).isNotNull();
     }
 }
