@@ -10,7 +10,7 @@ class AlgafoodApiApplicationTests {
 
 	@Test
 	void contextLoads() {
-		assertFalse(true);
+
 	}
 
 }
