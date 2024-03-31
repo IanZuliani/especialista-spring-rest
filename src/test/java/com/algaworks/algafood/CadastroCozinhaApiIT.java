@@ -2,6 +2,7 @@ package com.algaworks.algafood;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -25,5 +26,21 @@ public class CadastroCozinhaApiIT {
                     .get()
                 .then()
                     .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void deveConter4Cozinhas_QuandoConsultarCozinha(){
+
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+
+        RestAssured.given()
+                        .basePath("/cozinhas")
+                        .port(port)
+                        .accept(ContentType.JSON)
+                    .when()
+                        .get()
+                    .then()
+                        .body("", Matchers.hasSize(4))
+                        .body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
     }
 }
