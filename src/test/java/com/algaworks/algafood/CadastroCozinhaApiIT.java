@@ -1,5 +1,6 @@
 package com.algaworks.algafood;
 
+import com.algaworks.algafood.domain.model.Cozinha;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
@@ -45,5 +46,18 @@ public class CadastroCozinhaApiIT {
                     .then()
                         .body("", Matchers.hasSize(4))
                         .body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
+    }
+
+    @Test
+    public void deveRetornarStatus201_QuandoCadastrarCozinha(){
+
+       RestAssured.given()
+                       .body("{ \"nome\": \"chinesa\" }")
+                       .contentType(ContentType.JSON)
+                       .accept(ContentType.JSON)
+                   .when()
+                        .post()
+                   .then()
+                        .statusCode(HttpStatus.CREATED.value());
     }
 }
