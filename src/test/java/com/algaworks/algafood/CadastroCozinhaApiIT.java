@@ -1,6 +1,8 @@
 package com.algaworks.algafood;
 
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.repository.CozinhaRepository;
+import com.algaworks.algafood.util.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.flywaydb.core.Flyway;
@@ -21,16 +23,19 @@ public class CadastroCozinhaApiIT {
     private int port;
 
     @Autowired
-    private Flyway flyway;
+    private DatabaseCleaner databaseCleaner;
 
-
+    @Autowired
+    private CozinhaRepository repository;
 
     @BeforeEach
     public void setup(){
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = port;
         RestAssured.basePath = "/cozinhas";
-        //flyway.migrate();
+
+        databaseCleaner.clearTables();
+        prepararDados();
     }
 
     @Test
@@ -54,8 +59,8 @@ public class CadastroCozinhaApiIT {
                     .when()
                         .get()
                     .then()
-                        .body("", Matchers.hasSize(4))
-                        .body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
+                        .body("", Matchers.hasSize(2))
+                        .body("nome", Matchers.hasItems("Americana", "Tailandesa"));
     }
 
     @Test
@@ -69,5 +74,15 @@ public class CadastroCozinhaApiIT {
                         .post()
                    .then()
                         .statusCode(HttpStatus.CREATED.value());
+    }
+
+    private void prepararDados(){
+        var cozinha1 = new Cozinha();
+        cozinha1.setNome("Tailandesa");
+        repository.save(cozinha1);
+
+        var cozinha2 = new Cozinha();
+        cozinha2.setNome("Americana");
+        repository.save(cozinha2);
     }
 }
