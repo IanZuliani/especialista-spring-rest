@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -20,10 +21,12 @@ public class CadastroCozinhaService {
     public static final String MSG_COZINHA_EM_USO = "Cozinha de codigo %d nao pode ser removida pos esta emuso";
     @Autowired
     private CozinhaRepository cozinhaRepository;
+    @Transactional
     public Cozinha salvar(Cozinha cozinha){
         return cozinhaRepository.save(cozinha);
     }
 
+    @Transactional
     public void excluir(Long id){
         try {
             cozinhaRepository.deleteById(id);

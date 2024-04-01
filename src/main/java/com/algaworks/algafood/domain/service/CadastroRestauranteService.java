@@ -8,6 +8,7 @@ import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class CadastroRestauranteService {
     @Autowired
     private CadastroCozinhaService cozinhaService;
 
+    @Transactional
     public Restaurante salvar(Restaurante restaurante){
         var cozinhaID = restaurante.getCozinha().getId();
 
