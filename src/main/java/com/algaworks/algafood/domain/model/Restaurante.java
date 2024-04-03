@@ -32,21 +32,21 @@ public class Restaurante {
 
     //@NotNull
     //@NotEmpty
-    @NotBlank
+    //@NotBlank
     private String nome;
 
     //@DecimalMin("0")
     //Adicionaremos @NotNull na propriedade taxaFrete, pois o @PositiveOrZero não valida se é nulo
-    @NotNull
-    @PositiveOrZero
-    @Multiplo(numero = 5)
+    //@NotNull
+    //@PositiveOrZero
+   // @Multiplo(numero = 5)
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
     //@ManyToOne(fetch = FetchType.LAZY)
-    @Valid
-    @ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
-    @NotNull
+    //@Valid
+    //@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
+   //@NotNull
     @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)
     private Cozinha cozinha;

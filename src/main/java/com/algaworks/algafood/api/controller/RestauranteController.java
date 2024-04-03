@@ -3,9 +3,11 @@ package com.algaworks.algafood.api.controller;
 
 import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
+import com.algaworks.algafood.api.model.input.Restauranteinput;
 import com.algaworks.algafood.core.validation.ValidacaoException;
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioExceptional;
+import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
@@ -58,8 +60,9 @@ public class RestauranteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RestauranteModel adicionar (@RequestBody @Valid Restaurante restaurante){
+    public RestauranteModel adicionar (@RequestBody @Valid Restauranteinput restauranteInput){
         try {
+            var restaurante = toDomainObject(restauranteInput);
             return toModel(cadastroRestaurante.salvar(restaurante));
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioExceptional(e.getMessage());
@@ -67,8 +70,8 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
-    public RestauranteModel editar(@PathVariable long id, @RequestBody @Valid Restaurante restaurante){
-
+    public RestauranteModel editar(@PathVariable long id, @RequestBody @Valid Restauranteinput restauranteInput){
+        var restaurante = toDomainObject(restauranteInput);
         var restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
 
         BeanUtils.copyProperties(restaurante, restauranteAtual,
@@ -93,7 +96,8 @@ public class RestauranteController {
 
         validate(restauranteAtual, "restaurante");
 
-        return editar(restauranteId, restauranteAtual);
+        //return editar(restauranteId, restauranteAtual);
+        return null;
     }
 
     private void validate(Restaurante restaurante, String objectName){
@@ -150,5 +154,17 @@ public class RestauranteController {
         return restaurantes.stream()
                 .map(restaurante -> toModel(restaurante))
                 .collect(Collectors.toList());
+    }
+
+    private Restaurante toDomainObject(Restauranteinput restauranteinput){
+        var restaurante = new Restaurante();
+        restaurante.setNome(restauranteinput.getNome());
+        restaurante.setTaxaFrete(restauranteinput.getTaxaFrete());
+        var cozinha = new Cozinha();
+        cozinha.setId(restauranteinput.getCozinha().getId());
+        restaurante.setCozinha(cozinha);
+
+        return restaurante;
+
     }
 }
