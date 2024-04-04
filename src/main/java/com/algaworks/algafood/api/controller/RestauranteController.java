@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 
+import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
 import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
@@ -48,6 +49,9 @@ public class RestauranteController {
     @Autowired
     private RestauranteModelAssembler restauranteModelAssembler;
 
+    @Autowired
+    private RestauranteInputDisassembler restauranteInputDisassembler;
+
 
     @GetMapping
     public List<RestauranteModel> listar(){
@@ -66,7 +70,7 @@ public class RestauranteController {
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteModel adicionar (@RequestBody @Valid Restauranteinput restauranteInput){
         try {
-            var restaurante = toDomainObject(restauranteInput);
+            var restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
             return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restaurante));
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioExceptional(e.getMessage());
@@ -75,7 +79,7 @@ public class RestauranteController {
 
     @PutMapping("/{id}")
     public RestauranteModel editar(@PathVariable long id, @RequestBody @Valid Restauranteinput restauranteInput){
-        var restaurante = toDomainObject(restauranteInput);
+        var restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
         var restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
 
         BeanUtils.copyProperties(restaurante, restauranteAtual,
@@ -141,15 +145,4 @@ public class RestauranteController {
         }
     }
 
-      private Restaurante toDomainObject(Restauranteinput restauranteinput){
-        var restaurante = new Restaurante();
-        restaurante.setNome(restauranteinput.getNome());
-        restaurante.setTaxaFrete(restauranteinput.getTaxaFrete());
-        var cozinha = new Cozinha();
-        cozinha.setId(restauranteinput.getCozinha().getId());
-        restaurante.setCozinha(cozinha);
-
-        return restaurante;
-
-    }
 }
