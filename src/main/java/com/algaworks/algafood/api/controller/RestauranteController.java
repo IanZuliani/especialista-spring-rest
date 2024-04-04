@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 
+import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.Restauranteinput;
@@ -44,18 +45,21 @@ public class RestauranteController {
     @Autowired
     private SmartValidator validator;
 
+    @Autowired
+    private RestauranteModelAssembler restauranteModelAssembler;
+
 
     @GetMapping
     public List<RestauranteModel> listar(){
 
-        return toCollectionModel(restauranteRepository.findAll());
+        return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public RestauranteModel buscar(@PathVariable long id){
 
      var restaurante =  cadastroRestaurante.buscarOuFalhar(id);
-        return toModel(restaurante);
+        return restauranteModelAssembler.toModel(restaurante);
     }
 
     @PostMapping
@@ -63,7 +67,7 @@ public class RestauranteController {
     public RestauranteModel adicionar (@RequestBody @Valid Restauranteinput restauranteInput){
         try {
             var restaurante = toDomainObject(restauranteInput);
-            return toModel(cadastroRestaurante.salvar(restaurante));
+            return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restaurante));
         } catch (CozinhaNaoEncontradoException e) {
             throw new NegocioExceptional(e.getMessage());
         }
@@ -79,7 +83,7 @@ public class RestauranteController {
 
         try {
 
-            return toModel(cadastroRestaurante.salvar(restauranteAtual));
+            return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restauranteAtual));
         }catch (CozinhaNaoEncontradoException e){
             throw new NegocioExceptional(e.getMessage());
         }
@@ -137,26 +141,7 @@ public class RestauranteController {
         }
     }
 
-    private RestauranteModel toModel(Restaurante restaurante) {
-        var cozinhaModel = new CozinhaModel();
-        cozinhaModel.setId(restaurante.getCozinha().getId());
-        cozinhaModel.setNome(restaurante.getCozinha().getNome());
-
-        RestauranteModel restauranteModel = new RestauranteModel();
-        restauranteModel.setId(restaurante.getId());
-        restauranteModel.setNome(restaurante.getNome());
-        restauranteModel.setTaxaFrete(restaurante.getTaxaFrete());
-        restauranteModel.setCozinha(cozinhaModel);
-        return restauranteModel;
-    }
-
-    private List<RestauranteModel> toCollectionModel(List<Restaurante> restaurantes){
-        return restaurantes.stream()
-                .map(restaurante -> toModel(restaurante))
-                .collect(Collectors.toList());
-    }
-
-    private Restaurante toDomainObject(Restauranteinput restauranteinput){
+      private Restaurante toDomainObject(Restauranteinput restauranteinput){
         var restaurante = new Restaurante();
         restaurante.setNome(restauranteinput.getNome());
         restaurante.setTaxaFrete(restauranteinput.getTaxaFrete());
