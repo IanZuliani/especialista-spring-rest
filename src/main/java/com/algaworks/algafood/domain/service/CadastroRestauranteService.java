@@ -35,6 +35,18 @@ public class CadastroRestauranteService {
         return restauranteRepository.save(restaurante);
     }
 
+    @Transactional
+    public void ativar(Long id){
+        var restauranteAtual = buscarOuFalhar(id);
+        restauranteAtual.ativar();
+    }
+
+    @Transactional
+    public void inativar(Long id){
+        var restauranteAtual = buscarOuFalhar(id);
+        restauranteAtual.inativar();
+    }
+
 
     public Restaurante buscarOuFalhar(Long id){
         return restauranteRepository.findById(id).orElseThrow(()-> new RestauranteNaoEncontradoException(id));
