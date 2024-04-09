@@ -22,16 +22,24 @@ public class CadastroRestauranteService {
     @Autowired
     private CadastroCozinhaService cozinhaService;
 
+    @Autowired
+    private CadastroCidadeService cadastroCidade;
+
     @Transactional
     public Restaurante salvar(Restaurante restaurante){
         var cozinhaID = restaurante.getCozinha().getId();
+        var cidadeId = restaurante.getEndereco().getCidade().getId();
 
         var cozinha = cozinhaService.buscarOuFalhar(cozinhaID);
+
+        var cidade = cadastroCidade.buscarOuFalhar(cidadeId);
+
         /*var cozinha = cozinhaRepository.findById(cozinhaID)
                 .orElseThrow( ()-> new EndidadeNaoEncontradaException(
                         String.format(MSG_RESTAURANTE_NAO_ENCONTRADO,cozinhaID)));*/
 
         restaurante.setCozinha(cozinha);
+        restaurante.getEndereco().setCidade(cidade);
         return restauranteRepository.save(restaurante);
     }
 

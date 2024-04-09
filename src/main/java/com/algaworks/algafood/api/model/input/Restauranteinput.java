@@ -21,4 +21,8 @@ public class Restauranteinput {
     @Valid
     @NotNull
     private CozinhaIdInput cozinha;
+
+    @Valid
+    @NotNull
+    private EnderecoInput endereco;
 }
