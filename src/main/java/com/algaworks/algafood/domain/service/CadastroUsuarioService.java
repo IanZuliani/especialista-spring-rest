@@ -8,15 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.Optional;
+
 @Service
 public class CadastroUsuarioService {
 
     @Autowired
     private UsuarioRepository repository;
 
+
     //adicionar
     @Transactional
     public Usuario save(Usuario usuario){
+
+       repository.detach(usuario);
+
+        Optional<Usuario> usuarioExistente = repository.findByEmail(usuario.getEmail());
+
+        if(usuarioExistente.isPresent() && !usuarioExistente.get().equals(usuario)){
+            throw new NegocioExceptional(
+                    String.format("Ja existe um usuario cadastrado com o e-mail %w", usuario.getEmail()));
+        }
         return repository.save(usuario);
     }
 
