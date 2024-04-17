@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("grupos/{grupoId}/permissoes")
+@RequestMapping("/grupos/{grupoId}/permissoes")
 public class GrupoPermissaoController {
 
     @Autowired

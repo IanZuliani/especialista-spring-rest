@@ -9,9 +9,11 @@ import com.algaworks.algafood.domain.repository.PermissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+@Service
 public class CadastroPermissaoService {
 
     private static final String MSG_GRUPO_EM_USO = "Permissao de codigo %d nao pode ser removido pois esta em uso";

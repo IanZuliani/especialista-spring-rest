@@ -17,6 +17,9 @@ public class CadastroUsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
+    @Autowired
+    private CadastroGrupoService grupoService;
+
 
     //adicionar
     @Transactional
@@ -47,5 +50,21 @@ public class CadastroUsuarioService {
         }
 
         user.setSenha(novaSenha);
+    }
+
+    @Transactional
+    public void desassociarGrupo(Long userId, Long grupoId) {
+        var user = buscarOuFalhar(userId);
+        var grupo = grupoService.buscarOuFalhar(grupoId);
+
+        user.removerGrupo(grupo);
+
+    }
+
+    public void adicionarGrupo(Long userId, Long grupoId) {
+        var user = buscarOuFalhar(userId);
+        var grupo = grupoService.buscarOuFalhar(grupoId);
+
+        user.adicionarGrupo(grupo);
     }
 }
