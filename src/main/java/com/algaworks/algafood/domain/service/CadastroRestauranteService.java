@@ -24,6 +24,9 @@ public class CadastroRestauranteService {
     @Autowired
     private FormaPagamentoService formaPagamentoService;
 
+    @Autowired
+    private CadastroUsuarioService usuarioService;
+
     @Transactional
     public Restaurante salvar(Restaurante restaurante){
         var cozinhaID = restaurante.getCozinha().getId();
@@ -55,7 +58,7 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
-    public void dessassociarFormaPAgamento(Long restauranteId, Long formaPagamentoId){
+    public void desassociarFormaPAgamento(Long restauranteId, Long formaPagamentoId){
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         FormaPagamento formaPagamento = formaPagamentoService.buscarOuFalhar(formaPagamentoId);
         restaurante.removerFormaPagamento(formaPagamento);
@@ -66,6 +69,20 @@ public class CadastroRestauranteService {
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         FormaPagamento formaPagamento = formaPagamentoService.buscarOuFalhar(formaPagamentoId);
         restaurante.adicionarFormaPagamento(formaPagamento);
+    }
+
+    @Transactional
+    public void desassociarResponsavel(Long restauranteId, Long usuarioId){
+        var restaurante = buscarOuFalhar(restauranteId);
+        var usuario = usuarioService.buscarOuFalhar(usuarioId);
+        restaurante.removerResponsavel(usuario);
+    }
+
+    @Transactional
+    public void associarResponsavel(Long restauranteId, Long usuarioId){
+        var restaurante = buscarOuFalhar(restauranteId);
+        var usuario = usuarioService.buscarOuFalhar(usuarioId);
+        restaurante.adicionarResponsavel(usuario);
     }
 
     @Transactional

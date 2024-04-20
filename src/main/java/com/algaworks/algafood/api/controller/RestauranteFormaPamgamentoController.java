@@ -30,7 +30,7 @@ public class RestauranteFormaPamgamentoController {
     @DeleteMapping("/{idFormaPagamento}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void desassociar(@PathVariable Long id,@PathVariable Long idFormaPagamento){
-        cadastroRestaurante.dessassociarFormaPAgamento(id, idFormaPagamento);
+        cadastroRestaurante.desassociarFormaPAgamento(id, idFormaPagamento);
     }
 
     @PutMapping("/{idFormaPagamento}")
