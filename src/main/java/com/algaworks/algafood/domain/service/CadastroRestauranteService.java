@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CadastroRestauranteService {
 
@@ -58,6 +61,16 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
+    public void ativar(List<Long> restaurantesId){
+        restaurantesId.forEach(this::ativar);
+    }
+    @Transactional
+    public void inativar(List<Long> restaurantesId){
+        restaurantesId.forEach(this::inativar);
+    }
+
+
+    @Transactional
     public void desassociarFormaPAgamento(Long restauranteId, Long formaPagamentoId){
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         FormaPagamento formaPagamento = formaPagamentoService.buscarOuFalhar(formaPagamentoId);
@@ -84,6 +97,7 @@ public class CadastroRestauranteService {
         var usuario = usuarioService.buscarOuFalhar(usuarioId);
         restaurante.adicionarResponsavel(usuario);
     }
+
 
     @Transactional
     public void abrir(Long restauranteId) {
