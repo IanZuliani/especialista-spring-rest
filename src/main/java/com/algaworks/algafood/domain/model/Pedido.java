@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.model;
 
+import com.algaworks.algafood.domain.exception.NegocioException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,6 +38,9 @@ public class Pedido {
     private OffsetDateTime dataCancelamento;
     private OffsetDateTime dataEntrega;
 
+
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private FormaPagamento formaPagamento;
@@ -52,21 +56,37 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
- /*   public void calcularValorTotal2() {
+    public void calcularValorTotal() {
+        getItens().forEach(ItemPedido::calcularPrecoTotal);
+
         this.subtotal = getItens().stream()
-                .map(item -> item.getPrecoTotal())
+                .map(itens -> itens.getPrecoTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.valorTotal = this.subtotal.add(this.taxaFrete);
-    }*/
- public void calcularValorTotal() {
-     getItens().forEach(ItemPedido::calcularPrecoTotal);
+    }
 
-     this.subtotal = getItens().stream()
-             .map(itens -> itens.getPrecoTotal())
-             .reduce(BigDecimal.ZERO, BigDecimal::add);
+    public void confirmar(){
+        setStatus(StatusPedido.CONFIRMADO);
+        setDataConfirmacao(OffsetDateTime.now());
+    }
+    public void entregar(){
+        setStatus(StatusPedido.ENTREGUE);
+        setDataEntrega(OffsetDateTime.now());
+    }
+    public void cancelar(){
+        setStatus(StatusPedido.CANCELADO);
+        setDataCancelamento(OffsetDateTime.now());
+    }
 
-     this.valorTotal = this.subtotal.add(this.taxaFrete);
- }
+    private void setStatus(StatusPedido novoStatus){
+      if(!getStatus().naoPodeAlterarPara(novoStatus)) {
+          throw new NegocioException(
+                  String.format("Estatus do pedido %d nao pode ser alterado de %s para %s",
+                          getId(), getStatus(), novoStatus.getDescricao())
+          );
+      }
+      this.status = novoStatus;
+      };
+    }
 
-}
