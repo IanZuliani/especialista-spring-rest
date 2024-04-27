@@ -4,13 +4,10 @@ import com.algaworks.algafood.api.assembler.FormaPagamentoAssemble;
 import com.algaworks.algafood.api.assembler.FormaPagamentoDisassemble;
 import com.algaworks.algafood.api.model.FormaPagamentoModel;
 import com.algaworks.algafood.api.model.input.FormaPagamentoInput;
-import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
-import com.algaworks.algafood.domain.exception.NegocioExceptional;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

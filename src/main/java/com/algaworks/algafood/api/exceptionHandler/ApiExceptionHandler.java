@@ -3,7 +3,7 @@ package com.algaworks.algafood.api.exceptionHandler;
 import com.algaworks.algafood.core.validation.ValidacaoException;
 import com.algaworks.algafood.domain.exception.EndidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.NegocioExceptional;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -26,7 +26,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -275,8 +274,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
-    @ExceptionHandler(NegocioExceptional.class)
-    public ResponseEntity<?> handleNegocioExceptional(NegocioExceptional e, WebRequest request){
+    @ExceptionHandler(NegocioException.class)
+    public ResponseEntity<?> handleNegocioExceptional(NegocioException e, WebRequest request){
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
         var problemType = ProblemType.ERRO_NEGOCIO;

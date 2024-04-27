@@ -5,10 +5,8 @@ import com.algaworks.algafood.api.assembler.CidadeModelAssembler;
 import com.algaworks.algafood.api.model.CidadeModel;
 import com.algaworks.algafood.api.model.input.CidadeInput;
 import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
-import com.algaworks.algafood.domain.exception.NegocioExceptional;
-import com.algaworks.algafood.domain.model.Cidade;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +47,7 @@ public class CidadeController {
             var cidade = disassembler.toDomainObject(cidadeInput);
             return assembler.toModel(cadastroCidade.salvar(cidade));
         } catch (EstadoNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage(), e);
+            throw new NegocioException(e.getMessage(), e);
         }
 
     }
@@ -66,7 +64,7 @@ public class CidadeController {
 
             return assembler.toModel(cadastroCidade.salvar(cidadeAtual));
         } catch (EstadoNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage(), e);
+            throw new NegocioException(e.getMessage(), e);
         }
 
     }

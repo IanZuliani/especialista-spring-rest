@@ -49,23 +49,24 @@ public class Pedido {
     @JoinColumn(name = "usuario_cliente_id", nullable = false)
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
-    public void calcularValorTotal() {
+ /*   public void calcularValorTotal2() {
         this.subtotal = getItens().stream()
                 .map(item -> item.getPrecoTotal())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         this.valorTotal = this.subtotal.add(this.taxaFrete);
-    }
+    }*/
+ public void calcularValorTotal() {
+     getItens().forEach(ItemPedido::calcularPrecoTotal);
 
-    public void definirFrete() {
-        setTaxaFrete(getRestaurante().getTaxaFrete());
-    }
+     this.subtotal = getItens().stream()
+             .map(itens -> itens.getPrecoTotal())
+             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    public void atribuirPedidoAosItens() {
-        getItens().forEach(item -> item.setPedido(this));
-    }
+     this.valorTotal = this.subtotal.add(this.taxaFrete);
+ }
 
 }

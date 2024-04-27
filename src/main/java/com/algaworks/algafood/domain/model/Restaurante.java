@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@ValorZeroIncluiDescricao(valorField = "TaxaFrete", descricaoField="nome", descricaoObrigatoria="Frete Gratis")
+//@ValorZeroIncluiDescricao(valorField = "TaxaFrete", descricaoField="nome", descricaoObrigatoria="Frete Gratis")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity

@@ -16,11 +16,11 @@ public class PedidoModelAssemble {
     @Autowired
     private ModelMapper modelMapper;
 
-    public PedidoModel toModel(Pedido pedido){
+    public PedidoModel toModel(Pedido pedido) {
         return modelMapper.map(pedido, PedidoModel.class);
     }
 
-    public List<PedidoModel> toCollectionModel(Collection<Pedido> pedidos){
+    public List<PedidoModel> toCollectionModel(List<Pedido> pedidos) {
         return pedidos.stream()
                 .map(pedido -> toModel(pedido))
                 .collect(Collectors.toList());

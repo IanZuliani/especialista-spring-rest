@@ -3,19 +3,16 @@ package com.algaworks.algafood.api.controller;
 
 import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
 import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
-import com.algaworks.algafood.api.model.CozinhaModel;
 import com.algaworks.algafood.api.model.RestauranteModel;
 import com.algaworks.algafood.api.model.input.Restauranteinput;
 import com.algaworks.algafood.core.validation.ValidacaoException;
 import com.algaworks.algafood.domain.exception.*;
-import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -30,7 +27,6 @@ import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -72,7 +68,7 @@ public class RestauranteController {
             var restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
             return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restaurante));
         } catch (CozinhaNaoEncontradoException | CidadeNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage());
+            throw new NegocioException(e.getMessage());
         }
     }
 
@@ -91,7 +87,7 @@ public class RestauranteController {
 
             return restauranteModelAssembler.toModel(cadastroRestaurante.salvar(restauranteAtual));
         } catch (CozinhaNaoEncontradoException | CidadeNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage());
+            throw new NegocioException(e.getMessage());
         }
 
 
@@ -178,7 +174,7 @@ public class RestauranteController {
         try {
             cadastroRestaurante.ativar(restaurnateId);
         } catch (RestauranteNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage(), e);
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 
@@ -188,7 +184,7 @@ public class RestauranteController {
         try {
             cadastroRestaurante.inativar(restaurnateId);
         } catch (RestauranteNaoEncontradoException e) {
-            throw new NegocioExceptional(e.getMessage(), e);
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 }
