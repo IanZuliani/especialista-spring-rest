@@ -44,7 +44,7 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public PedidoModel findById(@PathVariable Long id){
+    public PedidoModel findById(@PathVariable String id){
         return assemble.toModel(service.buscarOuFalhar(id));
     }
 
