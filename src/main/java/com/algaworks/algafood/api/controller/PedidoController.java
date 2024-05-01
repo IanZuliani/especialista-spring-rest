@@ -48,7 +48,7 @@ public class PedidoController {
     private PedidoRepository repository;
 
 
-    @GetMapping
+/*    @GetMapping
     public MappingJacksonValue list(@RequestParam(required = false) String campos){
         var pedidos = repository.findAll();
         var pedidosModel = pedidoResumoModelAssemble.toCollectionModel(pedidos);
@@ -65,13 +65,13 @@ public class PedidoController {
         pedidosWrapper.setFilters(filterProvider);
 
         return pedidosWrapper;
-    }
- /*   @GetMapping
+    }*/
+    @GetMapping
     public List<PedidoResumoModel> list(){
         var pedidos = repository.findAll();
 
         return pedidoResumoModelAssemble.toCollectionModel(pedidos);
-    }*/
+    }
 
     @GetMapping("/{id}")
     public PedidoModel findById(@PathVariable String id){
