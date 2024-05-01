@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 
-@Configuration
+//@Configuration
 public class SquigglyConfig {
 
-    @Bean
+   // @Bean
     public FilterRegistrationBean<SquigglyRequestFilter> squigglyRequestFilter(ObjectMapper objectMapper){
         Squiggly.init(objectMapper, new RequestSquigglyContextProvider("campos", null));
 
