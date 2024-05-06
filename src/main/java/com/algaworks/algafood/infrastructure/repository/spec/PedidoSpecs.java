@@ -9,10 +9,19 @@ import java.util.ArrayList;
 
 public class PedidoSpecs {
 
-    public static Specification<Pedido> usandoFiltro(PedidoFilter filtro){
+    public static Specification<Pedido> usandoFiltro(PedidoFilter filtro) {
         return (root, query, builder) -> {
-            root.fetch("restaurante").fetch("cozinha");
-            root.fetch("cliente");
+
+            /*
+             * Esse if foid feito, para que apos a paginacao vir aqui buscar os dados, logo depos vai voltar para verificar
+             * a quantidade de Registro para retornar
+             * nao tem como fazer um fetch num count
+             * Se for um tipo pedido faz um fetch se nao for, nao faz
+             */
+            if (Pedido.class.equals(query.getResultType())) {
+                root.fetch("restaurante").fetch("cozinha");
+                root.fetch("cliente");
+            }
             // from Pedido p join fetch p.cliente
 
             //vamos ter uma Lista de predicate
@@ -21,7 +30,7 @@ public class PedidoSpecs {
             //adicionar Predicates no ArrayList
 
             //Verificando se o clienteId nao for nulo vamos add um predicate a lista
-            if(filtro.getClienteId() != null){
+            if (filtro.getClienteId() != null) {
                 /*
                     Construindo um predicate de igualdade clienteId = Cliente.id
                     root.get("cliente") -> nome da propriedade que queremos filtrar na classe Pedido
@@ -29,7 +38,7 @@ public class PedidoSpecs {
                  */
                 predicates.add(builder.equal(root.get("cliente"), filtro.getClienteId()));
             }
-            if(filtro.getRestauranteID() != null) {
+            if (filtro.getRestauranteID() != null) {
                 //Pegar Pelo ID do restaurante
                 predicates.add(builder.equal(root.get("restaurante"), filtro.getRestauranteID()));
             }
@@ -40,7 +49,7 @@ public class PedidoSpecs {
                 dataCriaao -> campo na entidade Pedido
              */
 
-            if(filtro.getDataCriacaoInicio() != null){
+            if (filtro.getDataCriacaoInicio() != null) {
                 predicates.add(builder.greaterThanOrEqualTo(root.get("dataCriacao"),
                         filtro.getDataCriacaoInicio()));
             }
@@ -50,7 +59,7 @@ public class PedidoSpecs {
                 lessThanOrEqualTo
                 dataCriaao -> campo na entidade Pedido
              */
-            if(filtro.getDataCriacaoFim() != null){
+            if (filtro.getDataCriacaoFim() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("dataCriacao"),
                         filtro.getDataCriacaoFim()));
             }

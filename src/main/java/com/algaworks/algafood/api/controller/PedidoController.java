@@ -18,6 +18,9 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -50,29 +53,18 @@ public class PedidoController {
     private PedidoRepository repository;
 
 
-/*    @GetMapping
-    public MappingJacksonValue list(@RequestParam(required = false) String campos){
-        var pedidos = repository.findAll();
-        var pedidosModel = pedidoResumoModelAssemble.toCollectionModel(pedidos);
 
-        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosModel);
-
-        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
-
-        if (StringUtils.isNotBlank(campos)) {
-            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
-        }
-
-        pedidosWrapper.setFilters(filterProvider);
-
-        return pedidosWrapper;
-    }*/
     @GetMapping
-    public List<PedidoResumoModel> pesquisar(PedidoFilter filter){
-        var pedidos = repository.findAll(PedidoSpecs.usandoFiltro(filter));
+    public Page<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable){
+        Page<Pedido> pedidos = repository.findAll(PedidoSpecs.usandoFiltro(filter), pageable);
 
-        return pedidoResumoModelAssemble.toCollectionModel(pedidos);
+        List<PedidoResumoModel> pedidoResumoModels =  pedidoResumoModelAssemble
+                .toCollectionModel(pedidos.getContent());
+
+        Page<PedidoResumoModel> pedidoResumoModelsPage = new PageImpl<>(
+                pedidoResumoModels, pageable, pedidos.getTotalElements());
+
+        return pedidoResumoModelsPage;
     }
 
     @GetMapping("/{id}")
