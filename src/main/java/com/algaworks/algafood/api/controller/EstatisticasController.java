@@ -3,7 +3,11 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.domain.filter.VendaDiariaFilter;
 import com.algaworks.algafood.domain.model.dto.VendaDiaria;
 import com.algaworks.algafood.domain.service.VendaQueryService;
+import com.algaworks.algafood.domain.service.VendaReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +22,34 @@ public class EstatisticasController {
     @Autowired
     private VendaQueryService vendaQueryService;
 
-    @GetMapping("/vendas-diarias")
+    @Autowired
+    private VendaReportService vendaReportService;
+
+    @GetMapping(path = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filtro,@RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
+        System.out.println("entrou no JsonValue");
         return vendaQueryService.consultarVendasDiarias(filtro, timeOffset);
+    }
+    @GetMapping(path = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
+            public ResponseEntity<byte[]> consultarVendasDiariasPdf(VendaDiariaFilter filtro, @RequestParam(required = false, defaultValue = "+00:00") String timeOffset){
+        System.out.println("entrou no PDF");
+
+        byte[] bytesPdf = vendaReportService.emitirVendasDiarias(filtro, timeOffset);
+
+        /**
+         * Nessa funcao vamos fazer a negociacao de conteudo, para que o cliente faca o download do arquivo de relatorio
+         * e nao seja  exibido na pagina
+         */
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=vendas-diaria.pdf");
+
+        /**
+         * Aqui criamso o Reponse entity com o Header  para fazer o download do arquivo
+         */
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .headers(headers)
+                .body(bytesPdf);
+
     }
 }
