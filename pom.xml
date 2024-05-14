@@ -68,6 +68,7 @@
 			<artifactId>rest-assured</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Modelar nossas entidade para DTO-->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
@@ -77,6 +78,18 @@
 			<groupId>com.github.bohnman</groupId>
 			<artifactId>squiggly-filter-jackson</artifactId>
 			<version>${squiggly.version}</version>
+		</dependency>
+		<!-- Trabalhar com o gerador de relatorio e PDF-->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.21.3</version>
+		</dependency>
+		<!-- Trabalhar com as funcoes de formatacao dentro do JasperReport-->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-functions</artifactId>
+			<version>6.21.3</version>
 		</dependency>
 	</dependencies>
 
