@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class RestauranteProdutoFotoController {
      *                          e Temos sempre que dar fotoProdutoInput.getArquivo() para pega
      */
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId,
+    public void atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @Valid
                               FotoProdutoInput fotoProdutoInput){
 
         /**
