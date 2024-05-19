@@ -36,7 +36,7 @@ public class FotoProduto {
     private String descricao;
     @NotNull
     private String contentType;
-    private Integer tamanho;
+    private Long tamanho;
 
 
 }

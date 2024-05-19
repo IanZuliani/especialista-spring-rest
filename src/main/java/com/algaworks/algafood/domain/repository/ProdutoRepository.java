@@ -9,7 +9,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProdutoRepository extends JpaRepository<Produto, Long> {
+/**
+ * ProdutorepositoryQueries -> Por nao termos um repository para FotoProduto criamos uma interface
+ * Com um metodo que vai ter que ser desenvolvido pelo agregate root
+ */
+public interface ProdutoRepository extends JpaRepository<Produto, Long>, ProdutorepositoryQueries {
 
     //Busca o produto passando o id do restaurante e o id do produto
     @Query("from Produto where restaurante.id = :restaurante and id = :produto")
@@ -21,4 +25,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     //Buscar pelos ati
     @Query("from Produto p where p.ativo = true and p.restaurante = :restaurante")
     List<Produto> findByAtivobyRestaurante(Restaurante restaurante);
+
+
 }

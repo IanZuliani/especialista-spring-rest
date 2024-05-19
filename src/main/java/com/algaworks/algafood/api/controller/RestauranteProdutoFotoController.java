@@ -1,6 +1,13 @@
 package com.algaworks.algafood.api.controller;
 
+import com.algaworks.algafood.api.assembler.FotoProdutoModelAssembler;
+import com.algaworks.algafood.api.model.FotoProdutoModel;
 import com.algaworks.algafood.api.model.input.FotoProdutoInput;
+import com.algaworks.algafood.domain.model.FotoProduto;
+import com.algaworks.algafood.domain.model.Produto;
+import com.algaworks.algafood.domain.service.CadastroProdutoService;
+import com.algaworks.algafood.domain.service.CatalogoFotoProdutoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +20,24 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
 public class RestauranteProdutoFotoController {
+
+    /**
+     * Vamos injetar nossa classe de catalogoFotoProduto
+     */
+    @Autowired
+    private CatalogoFotoProdutoService catalogoFotoProduto;
+    /**
+     * Vamos injetar Essa classe para poder fazer a busca do produto
+     */
+    @Autowired
+    private CadastroProdutoService cadastroProduto;
+    /**
+     * Vamos injetar essa classe para converter o ProdutoModel, que vem do metodo salvar() do service
+     * Para FotoProdutoModel Que e o retorna da funcaoo
+     */
+    @Autowired
+    private FotoProdutoModelAssembler fotoProdutoModelAssembler;
+
 
     /**
      *
@@ -28,37 +53,46 @@ public class RestauranteProdutoFotoController {
      *                          e Temos sempre que dar fotoProdutoInput.getArquivo() para pega
      */
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @Valid
+    public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @Valid
                               FotoProdutoInput fotoProdutoInput){
 
         /**
-         * Vamos transferir o arquivo que fizemos UPLOAD para um novo nome criando um UUID+nome do arquivo
+         * Verificamos primeiro se o produto Existe e se esta vinculado ao restaurante que queremos
+         * Se nao retorna uma exception
+         */
+        Produto produto = cadastroProduto.buscarOuFalhar(restauranteId, produtoId);
+
+        /**
+         * Pegando e alterando o nome do arquivo
          */
         var nomeArquivo = UUID.randomUUID().toString()
                 + "_" + fotoProdutoInput.getArquivo().getOriginalFilename();
 
         /**
-         * Jogar o arquivo para essa pasta que criamos no nosso desktop
+         * Pegando o ContentType
          */
-        var arquivoFoto = Path.of("/home/ian/Desktop/upload", nomeArquivo);
+        MultipartFile arquivo = fotoProdutoInput.getArquivo();
 
-
-        System.out.println(fotoProdutoInput.getDescricao());
-        System.out.println(arquivoFoto);
         /**
-         * Vai nos retornar qual o contentType do nosso aequivo
+         * Para salvarmos os dados precisamos passar uma instancia de FotoProduto
+         * 6. Em outros metodos Utilizamos o desasemble, Com ModelMapper,
+         * 7. Para transformar o Tipo Input, Que vem Da API no tipo de dado que precisamos enviar para o Banco
+         * Mas aqui Temos que fazer na Mao pos
          */
-        System.out.println(fotoProdutoInput.getArquivo().getContentType());
+        FotoProduto foto = new FotoProduto();
+        foto.setProduto(produto);
+        foto.setDescricao(fotoProdutoInput.getDescricao());
+        foto.setNomeArquivo(arquivo.getOriginalFilename());
+        foto.setContentType(arquivo.getContentType());
+        foto.setTamanho(arquivo.getSize());
 
 
-        try {
-            /**
-             * Transferindo o arquivo com o metodo transferTo
-             */
-            fotoProdutoInput.getArquivo().transferTo(arquivoFoto);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        FotoProduto fotoSalva = catalogoFotoProduto.salvar(foto);
+
+        /**
+         * Retornamos o Objeto Convertido
+         */
+        return fotoProdutoModelAssembler.toModel(fotoSalva);
 
     }
 
