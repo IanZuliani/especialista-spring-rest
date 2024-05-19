@@ -38,5 +38,15 @@ public class FotoProduto {
     private String contentType;
     private Long tamanho;
 
+    /**
+     * Para nao encadiarmos muito os metodos, vamos criar uma funcao que ja nos retorna o RestauranteId
+     */
+    public Long getRestauranteId(){
+        if(getProduto() != null){
+            return getProduto().getRestaurante().getId();
+        }
+        return null;
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.repository;
 
+import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,18 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long>, Produto
     @Query("from Produto p where p.ativo = true and p.restaurante = :restaurante")
     List<Produto> findByAtivobyRestaurante(Restaurante restaurante);
 
+    /**
+     * Verifica se existe uma foto ja cadastrada para o produto
+     * 5. Vamos sempre buscar a foto de um produto Passando RestauranteId e ProdutoId
+     * 6. Nao apenas pelo produto, por que esse produto pode nao ser do restaurante
+     * 8. Mas temos que pegar o restaurante que temos dentro da tabela Produto, entao vamos fazer um Join
+     * 9. FotoProduto f join f.produto p
+     * 10. Vamos informar que o [restaurante.id](http://restaurante.id) dentro de produto = restauranteId da funcao
+     *
+     * select f from → que queremos os dados apenas de fotoProduto
+     *
+     */
+    @Query("select f from FotoProduto f join f.produto p where p.restaurante.id = :restauranteId and f.produto.id = :produtoId")
+    Optional<FotoProduto> findFotoById(Long restauranteId, Long produtoId);
 
 }
