@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.UUID;
 
 public interface FotoStorageService {
 
@@ -14,6 +15,17 @@ public interface FotoStorageService {
      * Mas por se tratar de uma classe da Web `web.multipart.MultipartFile` , na e legal termos dentro da nossa classe de dominio
      */
     void armazenar(NovaFoto novaFoto);
+
+    /**
+     *
+     * @param nomeOriginal
+     * @return
+     * Metodo que fizemos para alterar o nome da imagem quando enviarmos para a base de dados.
+     * Para que quando o cliente envie a informacao, caso haja um arquivo com mesmo nome, nao sobreescreva
+     */
+    default String gerarNomeArquivo(String nomeOriginal){
+        return UUID.randomUUID().toString() + "_" + nomeOriginal;
+    }
 
 
     /**

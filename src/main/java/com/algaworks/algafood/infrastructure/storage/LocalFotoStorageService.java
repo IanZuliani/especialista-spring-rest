@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -21,6 +22,8 @@ public class LocalFotoStorageService implements FotoStorageService {
 
     @Override
     public void armazenar(NovaFoto novaFoto) {
+
+        var arquivoFoto = Path.of("/home/ian/Desktop/upload", novaFoto.getNomeArquivo());
         /**
          * Caminho para salvar o nova foto
          */
@@ -35,7 +38,8 @@ public class LocalFotoStorageService implements FotoStorageService {
          * Pode ser Lancada uma exption por isso temos que fazer o try catch
          */
         try {
-            FileCopyUtils.copy(novaFoto.getInputStream(), Files.newOutputStream(arquivoPath));
+            //FileCopyUtils.copy(novaFoto.getInputStream(),  Files.newOutputStream(arquivoFoto));
+           FileCopyUtils.copy(novaFoto.getInputStream(), Files.newOutputStream(arquivoPath));
         } catch (Exception e) {
             throw new StorageException("Nao foi possivel armazenar arquivo", e);
         }

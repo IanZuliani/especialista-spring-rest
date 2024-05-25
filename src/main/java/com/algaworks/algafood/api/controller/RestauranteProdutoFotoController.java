@@ -54,7 +54,7 @@ public class RestauranteProdutoFotoController {
      */
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoModel atualizarFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @Valid
-                              FotoProdutoInput fotoProdutoInput){
+                              FotoProdutoInput fotoProdutoInput) throws IOException {
 
         /**
          * Verificamos primeiro se o produto Existe e se esta vinculado ao restaurante que queremos
@@ -87,7 +87,7 @@ public class RestauranteProdutoFotoController {
         foto.setTamanho(arquivo.getSize());
 
 
-        FotoProduto fotoSalva = catalogoFotoProduto.salvar(foto);
+        FotoProduto fotoSalva = catalogoFotoProduto.salvar(foto, arquivo.getInputStream());
 
         /**
          * Retornamos o Objeto Convertido
