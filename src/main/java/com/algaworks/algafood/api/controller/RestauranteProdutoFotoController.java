@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -126,8 +128,11 @@ public class RestauranteProdutoFotoController {
      * @param produtoId
      * Vamos buscar a foto Do Produto PAra servir para o consumidor da API
      */
-    @GetMapping(produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<InputStreamResource> servirFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId){
+    @GetMapping
+    public ResponseEntity<InputStreamResource> servirFoto(@PathVariable Long restauranteId,
+                                                          @PathVariable Long produtoId,
+                                                          @RequestHeader(name = "accept") String acceptHeader)
+            throws HttpMediaTypeNotAcceptableException{
 
         try {
             /**
@@ -135,6 +140,26 @@ public class RestauranteProdutoFotoController {
              */
             var fotoProtudo = catalogoFotoProduto.buscarOuFalhar(
                     restauranteId, produtoId);
+
+            /**
+             * Criando um media type para passar de parametro para funcao
+             * MediaType.parseMediaType() -> Converte uma string em um media Type
+             * fotoProtudo.getContentType() -> Isso e o mesmo que MediaType
+             * Nesse caso pegamos o MediaType da imagem que vem do banco de dados
+             */
+            MediaType mediaTypeFoto = MediaType.parseMediaType(fotoProtudo.getContentType());
+
+
+            /**
+             * o Cliente pode passar uma lista de MediaTypes, por isso criamos a list
+             * Por que o cliente pode passar mas de um MediaType, sao a lista que eles aceitam
+             */
+            List<MediaType> mediaTypesAceitas = MediaType.parseMediaTypes(acceptHeader);
+
+            /**
+             * E vamos comparar com o tipo de MediaType que o consumidor esta passando por parametro quando chama a API
+             */
+            verificarCompatibilidadeMediaType(mediaTypeFoto, mediaTypesAceitas);
 
             /**
              * Buscando o InputStream da foto para devolver para o cliente
@@ -147,7 +172,7 @@ public class RestauranteProdutoFotoController {
              *
              */
             return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_PNG)
+                    .contentType(mediaTypeFoto)
                     .body(new InputStreamResource(inputStream));
             /**
              * Vamos lanca uma exception caso a imagem nao exista
@@ -155,6 +180,34 @@ public class RestauranteProdutoFotoController {
              */
         }catch (EntidadeNaoEncontradaException e){
             return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    /**
+     *
+     * @param mediaTypeFoto
+     * @param mediaTypesAceitas
+     * Verificando se aceita o tipo de media type salva no banco de dados
+     */
+    private void verificarCompatibilidadeMediaType(MediaType mediaTypeFoto,
+                                                   List<MediaType> mediaTypesAceitas) throws HttpMediaTypeNotAcceptableException {
+
+        /**
+         * Passando a lista de media type para stream
+         * .anyMatch() -> se apenas 1 e verdadeiro retorna true
+         * isCompatibleWith -> caso o consumidor utilize image/* isso ira funcionar tambem
+         * Se dentro da lista tem pelomenos 1 compativel
+         */
+        boolean compativel =mediaTypesAceitas.stream()
+                .anyMatch(mediaTypesAceita -> mediaTypesAceita.isCompatibleWith(mediaTypeFoto) );//Se pelo menos 1 da lista de media type e aceita esta tudo ok
+
+        /**
+         * Caso nao tenha na lista nenhum compativel com o que veio do banco de dados, vamos lanca essa exception
+         * Passando a Lista De MediaTypes aceita
+         */
+        if(!compativel){
+            throw new HttpMediaTypeNotAcceptableException(mediaTypesAceitas);
         }
 
     }
