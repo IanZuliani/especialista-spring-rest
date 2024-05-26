@@ -41,6 +41,7 @@ public class CatalogoFotoProdutoService {
         Long proditoId = foto.getProduto().getId();
         //Gerenado o nome do arquivo
         String nomeNovoArquivo = fotoStorage.gerarNomeArquivo(foto.getNomeArquivo());
+        String nomeArquivoExistente = null;
 
 
         Optional<FotoProduto> fotoExiste = produtoRepository.findFotoById(restauranteId,
@@ -48,6 +49,7 @@ public class CatalogoFotoProdutoService {
 
         //se existir a foto chama o metodo delete
         if (fotoExiste.isPresent()) {
+            nomeArquivoExistente = fotoExiste.get().getNomeArquivo();//se existir o arquivo, coloca o nome dele dentro dessa variavel.
             produtoRepository.delete(fotoExiste.get());
         }
 
@@ -78,7 +80,7 @@ public class CatalogoFotoProdutoService {
         /**
          * Depos utilizamos a interface para enviar o arquivo
          */
-        fotoStorage.armazenar(novaFoto);
+        fotoStorage.substituir(nomeArquivoExistente, novaFoto);
 
         /**
          * Temos que tomar cuidado que as vezes quando dermos o metodo save(foto)

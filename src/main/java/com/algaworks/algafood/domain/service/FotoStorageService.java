@@ -16,6 +16,20 @@ public interface FotoStorageService {
      */
     void armazenar(NovaFoto novaFoto);
 
+    void remover(String nomeArquivo);
+
+    /**
+     * criamos uma implementacao na interface para ficar mas fluido a leitura do codigo
+     * @param nomeArquivoAntigo
+     * @param novaFoto
+     */
+    default void substituir(String nomeArquivoAntigo, NovaFoto novaFoto){
+        this.armazenar(novaFoto);
+        if(nomeArquivoAntigo != null){
+            this.remover(nomeArquivoAntigo);
+        }
+    }
+
     /**
      *
      * @param nomeOriginal
