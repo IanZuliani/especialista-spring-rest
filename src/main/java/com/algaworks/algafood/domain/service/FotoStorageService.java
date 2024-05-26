@@ -9,6 +9,9 @@ import java.util.UUID;
 
 public interface FotoStorageService {
 
+
+    InputStream recuperar(String momeArquivo);
+
     /**
      * Para armazenar a foto precisamos dos dados do arquivo sendo passados na nosssa interface
      * Poderiamos passar `void armazenar(MultipartFile arquivo);`
