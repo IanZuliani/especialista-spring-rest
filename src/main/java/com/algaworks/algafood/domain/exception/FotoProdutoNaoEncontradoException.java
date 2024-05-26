@@ -1,6 +1,6 @@
 package com.algaworks.algafood.domain.exception;
 
-public class FotoProdutoNaoEncontradoException extends EndidadeNaoEncontradaException {
+public class FotoProdutoNaoEncontradoException extends EntidadeNaoEncontradaException {
     private static final long serialVersionUID = 1L;
     public FotoProdutoNaoEncontradoException(String mensagem){
         super(mensagem);

@@ -3,19 +3,24 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.assembler.FotoProdutoModelAssembler;
 import com.algaworks.algafood.api.model.FotoProdutoModel;
 import com.algaworks.algafood.api.model.input.FotoProdutoInput;
+import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.model.Produto;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.CadastroProdutoService;
 import com.algaworks.algafood.domain.service.CatalogoFotoProdutoService;
+import com.algaworks.algafood.domain.service.FotoStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -40,6 +45,9 @@ public class RestauranteProdutoFotoController {
     @Autowired
     private FotoProdutoModelAssembler fotoProdutoModelAssembler;
 
+    @Autowired
+    private FotoStorageService fotoStorage;
+
     /**
      *
      * @param restauranteId
@@ -49,7 +57,7 @@ public class RestauranteProdutoFotoController {
      * Lembrando que isso so e possivel pos e apenas 1 foto Por produto, se foce mas teriamos que passar
      * Um ArrayList
      */
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public FotoProdutoModel searchImage(@PathVariable Long restauranteId, @PathVariable Long produtoId){
         return fotoProdutoModelAssembler.toModel(catalogoFotoProduto.buscarOuFalhar(
                 restauranteId, produtoId));
@@ -109,6 +117,45 @@ public class RestauranteProdutoFotoController {
          * Retornamos o Objeto Convertido
          */
         return fotoProdutoModelAssembler.toModel(fotoSalva);
+
+    }
+
+    /**
+     *
+     * @param restauranteId
+     * @param produtoId
+     * Vamos buscar a foto Do Produto PAra servir para o consumidor da API
+     */
+    @GetMapping(produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    public ResponseEntity<InputStreamResource> servirFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId){
+
+        try {
+            /**
+             * Buscando as informacoes da foto do produto, se nao tiver nada no banco e lancada uma exception
+             */
+            var fotoProtudo = catalogoFotoProduto.buscarOuFalhar(
+                    restauranteId, produtoId);
+
+            /**
+             * Buscando o InputStream da foto para devolver para o cliente
+             */
+            InputStream inputStream = fotoStorage.recuperar(fotoProtudo.getNomeArquivo());
+
+            /**
+             * Criando o responseEntity
+             * No body Precisamos passar uma nova instancia de InputStream passando os dados da foto
+             *
+             */
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(new InputStreamResource(inputStream));
+            /**
+             * Vamos lanca uma exception caso a imagem nao exista
+             *Apenas com o status, visto que o mesmo apenas aceita uma Aceppet image/jpeg ou png
+             */
+        }catch (EntidadeNaoEncontradaException e){
+            return ResponseEntity.notFound().build();
+        }
 
     }
 }
