@@ -184,6 +184,11 @@ public class RestauranteProdutoFotoController {
 
     }
 
+    @DeleteMapping
+    public void delete(@PathVariable Long restauranteId, @PathVariable Long produtoId){
+        catalogoFotoProduto.excluir(restauranteId, produtoId);
+    }
+
     /**
      *
      * @param mediaTypeFoto

@@ -99,4 +99,15 @@ public class CatalogoFotoProdutoService {
                 produtoId).orElseThrow(()-> new FotoProdutoNaoEncontradoException(restauranteId, produtoId));
     }
 
+    public void excluir(Long restauranteId, Long produtoId){
+        var fotoProduto = buscarOuFalhar(restauranteId, produtoId);
+
+        produtoRepository.delete(fotoProduto);
+        produtoRepository.flush();
+
+        fotoStorage.remover(fotoProduto.getNomeArquivo());
+
+
+    }
+
 }
