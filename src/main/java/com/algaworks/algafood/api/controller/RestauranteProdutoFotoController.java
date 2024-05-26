@@ -3,8 +3,10 @@ package com.algaworks.algafood.api.controller;
 import com.algaworks.algafood.api.assembler.FotoProdutoModelAssembler;
 import com.algaworks.algafood.api.model.FotoProdutoModel;
 import com.algaworks.algafood.api.model.input.FotoProdutoInput;
+import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.FotoProduto;
 import com.algaworks.algafood.domain.model.Produto;
+import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.service.CadastroProdutoService;
 import com.algaworks.algafood.domain.service.CatalogoFotoProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,20 @@ public class RestauranteProdutoFotoController {
     @Autowired
     private FotoProdutoModelAssembler fotoProdutoModelAssembler;
 
+    /**
+     *
+     * @param restauranteId
+     * @param produtoId
+     * @return
+     * Metodo que busca as informacoes da foto de restaurante, passando o id do restaurante e o id do produto
+     * Lembrando que isso so e possivel pos e apenas 1 foto Por produto, se foce mas teriamos que passar
+     * Um ArrayList
+     */
+    @GetMapping
+    public FotoProdutoModel searchImage(@PathVariable Long restauranteId, @PathVariable Long produtoId){
+        return fotoProdutoModelAssembler.toModel(catalogoFotoProduto.buscarOuFalhar(
+                restauranteId, produtoId));
+    }
 
     /**
      *
@@ -95,5 +111,4 @@ public class RestauranteProdutoFotoController {
         return fotoProdutoModelAssembler.toModel(fotoSalva);
 
     }
-
 }
