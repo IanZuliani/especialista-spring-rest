@@ -1,6 +1,8 @@
 package com.algaworks.algafood.infrastructure.storage;
 
+import com.algaworks.algafood.core.StorageProperties;
 import com.algaworks.algafood.domain.service.FotoStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -17,8 +19,14 @@ public class LocalFotoStorageService implements FotoStorageService {
     /**
      * Pegando o diretorio de application.properties
      */
-    @Value("${algafood.storage.local.diretorio-fotos}")
-    private Path diretorioFotos;
+    //@Value("${algafood.storage.local.diretorio-fotos}")
+    //private Path diretorioFotos;
+
+    /**
+     * Nova classe de configuracao de envio de arquivo local ou pela Amazon S3
+      */
+    @Autowired
+    private StorageProperties storageProperties;
 
 
     @Override
@@ -92,6 +100,6 @@ public class LocalFotoStorageService implements FotoStorageService {
          * Mas Precisamos do path completo do arquivo Path + NomeDoArquivo
          * Para junta uma coisa com a outra utilizamos o resolve passando um novo path         *
          */
-        return diretorioFotos.resolve(Path.of(nomeArquivo));
+        return storageProperties.getLocal().getDiretorioFotos().resolve(Path.of(nomeArquivo));
     }
 }
