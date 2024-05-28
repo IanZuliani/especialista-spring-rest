@@ -40,7 +40,6 @@ public class AmazonS3Config {
          * Para isso injetamos a classe StorageProperties
          * withCredentials -> precisa por parametro uma instancia de AWSStaticCredentialsProvider
          * TemOs que passar a regiao que queremos trabalha
-         * .withRegion(storageProperties.getS3().getRegiao())
          */
         return AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
