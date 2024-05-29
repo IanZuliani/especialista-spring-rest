@@ -77,6 +77,7 @@ public class CatalogoFotoProdutoService {
          */
         var novaFoto = FotoStorageService.NovaFoto.builder()
                 .nomeArquivo(foto.getNomeArquivo())//como ja demos o set Logo acima ja vai ser alterado o nome aqui
+                .contentType(foto.getContentType())//pegando o ContentType para passar para Amazon s3
                 .inputStream(dadosArquivo)
                 .build();
 

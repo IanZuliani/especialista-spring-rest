@@ -56,6 +56,11 @@ public interface FotoStorageService {
         private String nomeArquivo;
 
         /**
+         * Adicionando o ContentType para ser passado para AMAZON S3
+         */
+        private String contentType;
+
+        /**
          * E o Fluxo de entrada do arquivo
          * Se entrarmos no controller onde pegamos o arquivo e dermos um
          * arquivo.getInputStream() e o fluxo de leitura que podemos ler o arquivo que acabamos de fazer o upload
