@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.net.URL;
 
 @Service
 public class Se3FotoStorageService implements FotoStorageService {
@@ -22,8 +23,29 @@ public class Se3FotoStorageService implements FotoStorageService {
     private StorageProperties storageProperties;
 
     @Override
-    public InputStream recuperar(String momeArquivo) {
-        return null;
+    public FotoRecuperada recuperar(String momeArquivo) {
+        /**
+         * Esse getCaminho arquivo ja retorna para a gente a chave desse objeto para a gente la no bucket
+         *
+         */
+        var caminhoArquivo = getCaminhoArquivo(momeArquivo);
+        /**
+         * Vamos chamar o servidor da amazon
+         * E temos que especificar qual e o bucket name e qual o Key, o Key e o caminho do arquivo la no bucket
+         * Nao a chave
+         *
+         * Vai montar a url do arquivo no bucket mas nao vai fazer a requisicao remota na na api da amazon.
+         * Ele so monta qual a URL do arquivo no bucket da amazon s3
+         */
+        URL url = amazonS3.getUrl(storageProperties.getS3().getBucket(), caminhoArquivo);
+
+        /**
+         * Retornando o objeto mas utilizando builder para montar o objeto
+         *
+         */
+        return FotoRecuperada.builder()
+                .url(url.toString())
+                .build();
     }
 
     @Override

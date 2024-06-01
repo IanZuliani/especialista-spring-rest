@@ -3,6 +3,7 @@ package com.algaworks.algafood.infrastructure.storage;
 import com.algaworks.algafood.core.storage.StorageProperties;
 import com.algaworks.algafood.domain.service.FotoStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.InputStream;
@@ -26,10 +27,20 @@ public class LocalFotoStorageService implements FotoStorageService {
 
 
     @Override
-    public InputStream recuperar(String momeArquivo) {
+    public FotoRecuperada recuperar(String momeArquivo) {
         Path arquivoPath = getArquivoPath(momeArquivo);
         try {
-            return Files.newInputStream(arquivoPath);
+            /**
+             * Pela classe ser anotada com builder, vamos ter que criar uma nova instancia
+             * passando os argumentos para criar um objeto
+             * Passamos o InputStream que e o que precisamos
+             * e damos um builder.
+             */
+            FotoRecuperada fotoRecuperada = FotoRecuperada.builder()
+                    .inputStream(Files.newInputStream(arquivoPath))
+                    .build();
+            return fotoRecuperada;
+
         } catch (Exception e) {
             throw new StorageException("Nao foi possivel recuperar arquivo", e);
         }

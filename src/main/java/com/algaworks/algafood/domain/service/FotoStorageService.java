@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface FotoStorageService {
 
 
-    InputStream recuperar(String momeArquivo);
+    FotoRecuperada recuperar(String momeArquivo);
 
     /**
      * Para armazenar a foto precisamos dos dados do arquivo sendo passados na nosssa interface
@@ -67,5 +67,25 @@ public interface FotoStorageService {
          * a partir dele podemos salvar a foto.
          */
         private InputStream inputStream;
+    }
+
+    /**
+     * Novo tipo de classe para recuperar arquivo
+     */
+    @Builder
+    @Getter
+    class FotoRecuperada {
+
+        private InputStream inputStream;
+        private String url;
+
+        public boolean temUrl() {
+            return url != null;
+        }
+
+        public boolean temInputStream() {
+            return inputStream != null;
+        }
+
     }
 }
