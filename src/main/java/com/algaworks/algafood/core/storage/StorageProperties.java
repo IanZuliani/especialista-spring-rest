@@ -25,6 +25,16 @@ public class StorageProperties {
 
     private S3 s3 = new S3();
 
+    /**
+     * vamos criar uma propriedade que nos informa qual storage queremos utilizar
+     * Se nao for configurado, por padrao ele utiliza LOCAL
+     */
+    private TipoStorage tipo = TipoStorage.LOCAL;
+
+    public enum TipoStorage{
+        LOCAL, S3
+    }
+
     @Getter
     @Setter
     public class Local {

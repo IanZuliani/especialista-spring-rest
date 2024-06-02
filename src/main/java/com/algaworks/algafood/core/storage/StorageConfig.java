@@ -1,10 +1,14 @@
 package com.algaworks.algafood.core.storage;
 
+import com.algaworks.algafood.domain.service.FotoStorageService;
+import com.algaworks.algafood.infrastructure.storage.LocalFotoStorageService;
+import com.algaworks.algafood.infrastructure.storage.S3FotoStorageService;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * Tornado um Bean Spring
  */
 @Configuration
-public class AmazonS3Config {
+public class StorageConfig {
 
     @Autowired
     private StorageProperties storageProperties;
@@ -24,6 +28,7 @@ public class AmazonS3Config {
      * O tornando um Bean Spring
      */
     @Bean
+    @ConditionalOnProperty(name = "algafood.storage.tipo", havingValue = "s3")
     public AmazonS3 amazonS3(){
 
         /**
@@ -47,4 +52,29 @@ public class AmazonS3Config {
                 .build();
 
     }
+
+    /**
+     * Vamos retornar uma instancia de FotoStorageService
+     * 4. Lembrando que FotoStorageService e uma interface, entao qualquer uma das duas implementacoes que temos hoje,
+     * pode ser retornada por esse metodo. Orientacao a Objeto
+     * @return
+     * Pode ser return new Se3FotoStorageService();
+     * ou return new LocalFotoStorageService();
+     */
+    @Bean
+    public FotoStorageService fotoStorageService(){
+        /**
+         * Para saber qual vamos retornar vamos fazer o seguinte
+         * Verifica se storageProperties.getTipo() == s3 retorna uma instancia de s3
+         * Caso Contrario e local
+         */
+        if(StorageProperties.TipoStorage.S3.equals(storageProperties.getTipo())){
+            return new S3FotoStorageService();
+        } else {
+            return new LocalFotoStorageService();
+        }
+
+
+    }
+
 }
