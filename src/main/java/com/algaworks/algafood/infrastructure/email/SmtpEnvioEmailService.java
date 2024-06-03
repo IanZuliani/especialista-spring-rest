@@ -54,7 +54,7 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
              *Vamos pegar o mensagem.getDestinatario(), mas esse retorna um Set, conjunto de String nao um array
              * Pra gente converter em um array basta colocarmos .toArray(new String[0]) passando um array de string vazio.
              */
-            helper.setTo(mensagem.getDestinatario().toArray(new String[0]));
+            helper.setTo(mensagem.getDestinatarios().toArray(new String[0]));
 
             /**
              * Assunto do email

@@ -6,6 +6,8 @@ import com.algaworks.algafood.domain.model.StatusPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.algaworks.algafood.domain.service.EnvioEmailService.Mensagem;
+
 
 import java.time.OffsetDateTime;
 
@@ -15,11 +17,31 @@ public class FluxoPedidoService {
     @Autowired
     private EmissaoPedidoService emissaoPedido;
 
+    @Autowired
+    private EnvioEmailService envioEmail;
 
     @Transactional
     public void confirmar(String codigoPedido) {
         Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
         pedido.confirmar();
+
+        /**
+         * Criando o corpo do email
+         *Para nao precisarmos instanciar um Set e passar no destinatario podemos anotar a propriedade  destinatarios com @Singular do lombok
+         * Nesse caso a propriedade vai para o cingular
+         * destinatario
+         * e podemos passar apenas um email
+         * .destinatario(pedido.getCliente().getEmail());
+         * se quisermos passar outro email basta colocarmos outro destinatario
+         * .destinatario(pedido.getCliente().getEmail());
+         */
+        var mensagem = Mensagem.builder()
+                .assunto(pedido.getRestaurante().getNome() + "Pedido Confirmado")
+                .corpo("O Pedido de codigo <Strong>" + pedido.getCodigo() + "</Strong> Foi Confirmado")
+                .destinatario(pedido.getCliente().getEmail())
+                .build();
+
+        envioEmail.enviar(mensagem);
     }
 
     @Transactional
