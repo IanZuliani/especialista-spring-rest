@@ -2,12 +2,16 @@ package com.algaworks.algafood.infrastructure.email;
 
 import com.algaworks.algafood.core.email.EmailProperties;
 import com.algaworks.algafood.domain.service.EnvioEmailService;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 
 /**
  * Implementacao de envio de email atraves da interface EnvioEmailService
@@ -21,9 +25,22 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
     @Autowired
     private EmailProperties emailProperties;
 
+    /**
+     * Classe de configuracao para trabalha com o templates de envio de email
+     */
+    @Autowired
+    private Configuration freemarkerConfig;
+
     @Override
     public void enviar(Mensagem mensagem) {
         try {
+
+            /**
+             *
+             */
+            String corpo = processarTemplate(mensagem);
+
+
             /**
              * O metodo sender precisa de um tipo MimeMessage
              * O mailSender que estamos injetando cria uma instancia de mailSender
@@ -64,7 +81,7 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
              * Corpo do email,
              * True Que possibilita Html
              */
-            helper.setText(mensagem.getCorpo(), true);
+            helper.setText(corpo, true);
 
 
             mailSender.send(mimeMessage);
@@ -72,5 +89,38 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
             throw new EmailException("Nao foi possivel enviar e-mail", e);
         }
 
+    }
+
+    /**
+     * Agora que estamos utilizando a biblioteca FREEMaKER
+     * Nap passamos mas texto como envio no corpo
+     * Agora passamos HTML e Vamos criar um metodo para processar esse HTML
+     *
+     * Dado uma mensagem ele deve retornar o corpo do email que vai ser enviado
+     * A PARTIR DE AGORA GETCORPO E O NOME DO ARQUIVO HTML
+     */
+    private String processarTemplate(Mensagem mensagem){
+
+        try {
+            /**
+             * Pegamos o template
+             */
+            Template template = freemarkerConfig.getTemplate(mensagem.getCorpo());
+
+            /**
+             * Processamos ele
+             *Agora que temos o template vamos pegar a classe de Utils do FreeMarker
+             * e utilizamos o metodo processTemplateIntoString para transformar tudo em string
+             * primeiro parametro e o template
+             * segundo argumento e o objeto java que vai ser utilizado para gerar as informacoes dentro do template
+             * Vamos criar o objeto em Mensagem
+             * @Singular("variavel") Po
+             * private Map<String, Object> variaveis;
+             */
+            return FreeMarkerTemplateUtils.processTemplateIntoString(template, mensagem.getVariaveis());
+
+        } catch (Exception e) {
+            throw new EmailException("Nao foi possivel montar o template do e-mail", e);
+        }
     }
 }
