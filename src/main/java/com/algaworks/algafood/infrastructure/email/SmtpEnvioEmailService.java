@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Implementacao de envio de email atraves da interface EnvioEmailService
  */
-@Service
+//@Service
 public class SmtpEnvioEmailService implements EnvioEmailService {
 
     @Autowired
@@ -35,9 +35,7 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
     public void enviar(Mensagem mensagem) {
         try {
 
-            /**
-             *
-             */
+
             String corpo = processarTemplate(mensagem);
 
 
@@ -99,7 +97,7 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
      * Dado uma mensagem ele deve retornar o corpo do email que vai ser enviado
      * A PARTIR DE AGORA GETCORPO E O NOME DO ARQUIVO HTML
      */
-    private String processarTemplate(Mensagem mensagem){
+    public String processarTemplate(Mensagem mensagem){
 
         try {
             /**
