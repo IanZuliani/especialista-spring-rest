@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 
@@ -34,56 +35,13 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
     @Override
     public void enviar(Mensagem mensagem) {
         try {
-
-
-            String corpo = processarTemplate(mensagem);
-
-
             /**
              * O metodo sender precisa de um tipo MimeMessage
              * O mailSender que estamos injetando cria uma instancia de mailSender
              */
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-
-            /**
-             * Apos criarmos essa instandia de mimemessage, poderiamos setar as informacoes
-             * Utilizando a propria instancia
-             * Exemplo mimeMessage.addFrom();
-             * Mas o Spring possui um Helper chamado MimeMessageHelper que nos ajuda na criacao desse objeto para o envio de email
-             * De uma forma muito mas facil
-             * Vamos passar o encoding "UTF-8" para nao dar erro de caracter
-             */
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
-
-            /**
-             * Criando o Remetente
-             * Todas as classes vai utilziar o Mesmo remetente vinda do application.properties
-             * algafood.email.remetente=Algafood <naoresponder@algafood.com.br>
-             * Para pegar o email, criamos a classe de configuracao EmailProperties
-             */
-            helper.setFrom(emailProperties.getRemetente());
-
-            /**
-             * Vamos expcificar tambem os destinatarios
-             * Vamos utilizar o setTo() que recebe um array de string
-             *Vamos pegar o mensagem.getDestinatario(), mas esse retorna um Set, conjunto de String nao um array
-             * Pra gente converter em um array basta colocarmos .toArray(new String[0]) passando um array de string vazio.
-             */
-            helper.setTo(mensagem.getDestinatarios().toArray(new String[0]));
-
-            /**
-             * Assunto do email
-             */
-            helper.setSubject(mensagem.getAssunto());
-            /**
-             * Corpo do email,
-             * True Que possibilita Html
-             */
-            helper.setText(corpo, true);
-
-
+            MimeMessage mimeMessage = criarMimeMessage(mensagem);
             mailSender.send(mimeMessage);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new EmailException("Nao foi possivel enviar e-mail", e);
         }
 
@@ -93,11 +51,11 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
      * Agora que estamos utilizando a biblioteca FREEMaKER
      * Nap passamos mas texto como envio no corpo
      * Agora passamos HTML e Vamos criar um metodo para processar esse HTML
-     *
+     * <p>
      * Dado uma mensagem ele deve retornar o corpo do email que vai ser enviado
      * A PARTIR DE AGORA GETCORPO E O NOME DO ARQUIVO HTML
      */
-    public String processarTemplate(Mensagem mensagem){
+    public String processarTemplate(Mensagem mensagem) {
 
         try {
             /**
@@ -120,5 +78,50 @@ public class SmtpEnvioEmailService implements EnvioEmailService {
         } catch (Exception e) {
             throw new EmailException("Nao foi possivel montar o template do e-mail", e);
         }
+    }
+
+    protected MimeMessage criarMimeMessage(Mensagem mensagem) throws MessagingException {
+        String corpo = processarTemplate(mensagem);
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        /**
+         * Apos criarmos essa instandia de mimemessage, poderiamos setar as informacoes
+         * Utilizando a propria instancia
+         * Exemplo mimeMessage.addFrom();
+         * Mas o Spring possui um Helper chamado MimeMessageHelper que nos ajuda na criacao desse objeto para o envio de email
+         * De uma forma muito mas facil
+         * Vamos passar o encoding "UTF-8" para nao dar erro de caracter
+         */
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+
+        /**
+         * Criando o Remetente
+         * Todas as classes vai utilziar o Mesmo remetente vinda do application.properties
+         * algafood.email.remetente=Algafood <naoresponder@algafood.com.br>
+         * Para pegar o email, criamos a classe de configuracao EmailProperties
+         */
+        helper.setFrom(emailProperties.getRemetente());
+
+        /**
+         * Vamos expcificar tambem os destinatarios
+         * Vamos utilizar o setTo() que recebe um array de string
+         *Vamos pegar o mensagem.getDestinatario(), mas esse retorna um Set, conjunto de String nao um array
+         * Pra gente converter em um array basta colocarmos .toArray(new String[0]) passando um array de string vazio.
+         */
+        helper.setTo(mensagem.getDestinatarios().toArray(new String[0]));
+
+        /**
+         * Assunto do email
+         */
+        helper.setSubject(mensagem.getAssunto());
+
+        /**
+         * Corpo do email,
+         * True Que possibilita Html
+         */
+        helper.setText(corpo, true);
+
+        return mimeMessage;
     }
 }

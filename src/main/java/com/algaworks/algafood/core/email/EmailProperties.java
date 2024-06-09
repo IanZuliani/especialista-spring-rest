@@ -20,6 +20,8 @@ public class EmailProperties {
     de definir a propriedade **/
 
     private Implementacao impl = Implementacao.FAKE;
+
+    private Sandbox sandbox = new Sandbox();
     /**
      * NotNull e para validar se temos a propriedade dentro de
      * application.properties
@@ -28,6 +30,14 @@ public class EmailProperties {
     private String remetente;
 
     public enum Implementacao {
-        SMTP, FAKE
+        SMTP, FAKE, SANDBOX
+    }
+
+    @Getter
+    @Setter
+    public class Sandbox {
+
+        private String destinatario;
+
     }
 }
