@@ -3,6 +3,7 @@ package com.algaworks.algafood.domain.service;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Pedido;
 import com.algaworks.algafood.domain.model.StatusPedido;
+import com.algaworks.algafood.domain.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,31 +19,18 @@ public class FluxoPedidoService {
     private EmissaoPedidoService emissaoPedido;
 
     @Autowired
-    private EnvioEmailService envioEmail;
+    private PedidoRepository pedidoRepository;
 
+    /**
+     * Mesmo nao chamando o metodo save, o metodo confirmar faz alteracoes de uma instancia que esta sendo gerenciada
+     * pelo Entity Manager do JPA
+     * Mas precisamos do metodo save para disparar o evento
+     */
     @Transactional
     public void confirmar(String codigoPedido) {
         Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
         pedido.confirmar();
-
-        /**
-         * Criando o corpo do email
-         *Para nao precisarmos instanciar um Set e passar no destinatario podemos anotar a propriedade  destinatarios com @Singular do lombok
-         * Nesse caso a propriedade vai para o cingular
-         * destinatario
-         * e podemos passar apenas um email
-         * .destinatario(pedido.getCliente().getEmail());
-         * se quisermos passar outro email basta colocarmos outro destinatario
-         * .destinatario(pedido.getCliente().getEmail());
-         */
-        var mensagem = Mensagem.builder()
-                .assunto(pedido.getRestaurante().getNome() + "Pedido Confirmado")
-                .variavel("pedido", pedido)
-                .corpo("pedido-confirmado.html")
-                .destinatario(pedido.getCliente().getEmail())
-                .build();
-
-        envioEmail.enviar(mensagem);
+        pedidoRepository.save(pedido);
     }
 
     @Transactional

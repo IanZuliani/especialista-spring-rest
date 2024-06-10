@@ -1,9 +1,11 @@
 package com.algaworks.algafood.domain.model;
 
+import com.algaworks.algafood.domain.event.PedidoConfirmadoEvent;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,10 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 1. Para dispararmos eventos vamos extender uma classe dentro da entidade Pedido chamada
+ * 2. `AbstractAggregateRoot<Pedido>` → no argumento Passamos a propria classe.
+ * Caso nao queremos gerar um Equals And Hash code da Super classe apenas da classe que estamos colocamos
+ * a anotacao callSuper = false
+ *
+ */
+
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Entity
-public class Pedido {
+public class Pedido extends AbstractAggregateRoot<Pedido> {
 
     @EqualsAndHashCode.Include
     @Id
@@ -67,9 +77,24 @@ public class Pedido {
         this.valorTotal = this.subtotal.add(this.taxaFrete);
     }
 
+    /**
+     * Mesmo nao chamando o metodo save, o metodo confirmar faz alteracoes de uma instancia que esta sendo gerenciada
+     * pelo Entity Manager do JPA
+     * Mas precisamos do metodo save para disparar o evento
+     */
     public void confirmar(){
         setStatus(StatusPedido.CONFIRMADO);
         setDataConfirmacao(OffsetDateTime.now());
+
+        /**
+         * Criando uma instancia de evento, com todas as informacoes do evento que acabou de acontecer
+         * Caso e confirmar o pedido
+         * Para utilziar, temos que ter uma classe que representa o Evento
+         * this -> instancia atual do pedido
+         * Nesse momento nao estamos disparando o evento, estamos registrando um evento que deve ser disparado
+         * assim que o objeto dessa entidade Pedido for salvo no repositorio
+         */
+        registerEvent(new PedidoConfirmadoEvent(this));
     }
     public void entregar(){
         setStatus(StatusPedido.ENTREGUE);
