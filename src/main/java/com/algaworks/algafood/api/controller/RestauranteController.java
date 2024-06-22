@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/restaurantes")
 public class RestauranteController {
