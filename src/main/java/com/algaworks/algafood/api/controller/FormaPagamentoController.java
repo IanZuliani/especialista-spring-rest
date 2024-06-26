@@ -51,8 +51,13 @@ public class FormaPagamentoController {
 
     //findByid
     @GetMapping("/{id}")
-    public FormaPagamentoModel findById(@PathVariable Long id){
-        return assemble.toModel(cadastroFormaPagamento.buscarOuFalhar(id));
+    public ResponseEntity<FormaPagamentoModel> findById(@PathVariable Long id){
+        var formaPagemento = assemble
+                .toModel(cadastroFormaPagamento.buscarOuFalhar(id));
+        return ResponseEntity
+                .ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formaPagemento);
     }
 
     //post
