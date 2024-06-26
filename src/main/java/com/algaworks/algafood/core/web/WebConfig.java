@@ -28,8 +28,8 @@ public class WebConfig implements WebMvcConfigurer {
          * allowedMethods → Definir os metodos, os habilitados por padrao sao GET, HEAD, “POST”, se quisermos todos os metodos colocamo *
          */
         registry.addMapping("/**")
-                .allowedOrigins("*")//ja e por padrao todas as origens mas podemos definir qual site faz a busca
                 .allowedMethods("*");//Liberando os metodos
-                //.maxAge(30);
+//			.allowedOrigins("*")//ja e por padrao todas as origens mas podemos definir qual site faz a busca
+//			.maxAge(30);
     }
 }

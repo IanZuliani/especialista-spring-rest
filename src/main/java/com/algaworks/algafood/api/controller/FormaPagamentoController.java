@@ -7,13 +7,17 @@ import com.algaworks.algafood.api.model.input.FormaPagamentoInput;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-@RestController("/formaspagamento")
+@RestController
+@RequestMapping("/formas-pagamento")
 public class FormaPagamentoController {
 
     @Autowired
@@ -28,11 +32,21 @@ public class FormaPagamentoController {
     @Autowired
     private FormaPagamentoDisassemble disassemble;
 
-    //findall
-
     @GetMapping
-    public List<FormaPagamentoModel> findAll(){
-        return assemble.toCollectionModel(repository.findAll());
+    public ResponseEntity<List<FormaPagamentoModel>> findAll(){
+        List<FormaPagamentoModel> formaPagamentoModels =  assemble
+                .toCollectionModel(repository.findAll());
+
+        /**
+         * Criando a resposta cacheada para que o navegador do cliente cacheie ela por 10 segundos
+         * atraves de um parametro no header
+         * Cache-control: max-age=10
+         * Fazemos no HesponseEntity para poder alterar o cabecalho
+         */
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formaPagamentoModels);
+
     }
 
     //findByid
