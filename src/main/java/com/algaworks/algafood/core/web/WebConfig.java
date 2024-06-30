@@ -1,6 +1,10 @@
 package com.algaworks.algafood.core.web;
 
+import javax.servlet.Filter;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -31,5 +35,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("*");//Liberando os metodos
 //			.allowedOrigins("*")//ja e por padrao todas as origens mas podemos definir qual site faz a busca
 //			.maxAge(30);
+    }
+
+
+    /**
+     * Um filtro de Shallow ETags
+     * trabalho dele e receber a requisicao gerar um rash da resposta e colocar um cabecalho etag
+     * ele verifica se o rash da nova requisicao e igual o da antiga
+     * se for ele retorna um 304 not modified
+     * @return
+     */
+    @Bean
+    public Filter shallowEtagHeaderFilter(){
+        return new ShallowEtagHeaderFilter();
     }
 }
