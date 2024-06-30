@@ -44,7 +44,10 @@ public class FormaPagamentoController {
          * Fazemos no HesponseEntity para poder alterar o cabecalho
          */
         return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                //.cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate())
+                //.cacheControl(CacheControl.noCache())
+                //.cacheControl(CacheControl.noStore())
                 .body(formaPagamentoModels);
 
     }
