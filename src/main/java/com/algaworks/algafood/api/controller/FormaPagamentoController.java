@@ -4,6 +4,7 @@ import com.algaworks.algafood.api.assembler.FormaPagamentoAssemble;
 import com.algaworks.algafood.api.assembler.FormaPagamentoDisassemble;
 import com.algaworks.algafood.api.model.FormaPagamentoModel;
 import com.algaworks.algafood.api.model.input.FormaPagamentoInput;
+import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,11 @@ public class FormaPagamentoController {
 
     @GetMapping
     public ResponseEntity<List<FormaPagamentoModel>> findAll(){
+
+        List<FormaPagamento> todasFormasPagamentos = repository.findAll();
+
         List<FormaPagamentoModel> formaPagamentoModels =  assemble
-                .toCollectionModel(repository.findAll());
+                .toCollectionModel(todasFormasPagamentos);
 
         /**
          * Criando a resposta cacheada para que o navegador do cliente cacheie ela por 10 segundos
