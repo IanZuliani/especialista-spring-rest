@@ -12,8 +12,11 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +37,31 @@ public class FormaPagamentoController {
     private FormaPagamentoDisassemble disassemble;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoModel>> findAll(){
+    public ResponseEntity<List<FormaPagamentoModel>> findAll(ServletWebRequest request){
+
+        /**
+         * Desativando o ShallowEtagHeaderFilter para essa requisicao,
+         * o filtro iria substituir as coisas que estamos fazendo aqui
+         */
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+
+        /**
+         * Se nao tem forma de pagamento o eTag e 0
+         */
+        String eTag = "0";
+
+        /**
+         * Consultar data da ultima atualizacao no repositorio
+         */
+        OffsetDateTime dataUltimaAtualizacao = repository.getDataUltimaAtualizacao();
+
+        if(dataUltimaAtualizacao != null){
+            eTag = String.valueOf( dataUltimaAtualizacao.toEpochSecond());
+        }
+
+        if(request.checkNotModified(eTag)){
+            return null;
+        }
 
         List<FormaPagamento> todasFormasPagamentos = repository.findAll();
 
@@ -52,6 +79,7 @@ public class FormaPagamentoController {
                 //.cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate())
                 //.cacheControl(CacheControl.noCache())
                 //.cacheControl(CacheControl.noStore())
+                .eTag(eTag)
                 .body(formaPagamentoModels);
 
     }
