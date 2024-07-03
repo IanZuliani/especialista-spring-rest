@@ -9,6 +9,7 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class CidadeController {
     private CidadeInputDisassembler disassembler;
 
     @GetMapping("/{cidadeId}")
-    public CidadeModel buscar(@PathVariable Long cidadeId) {
+    public CidadeModel buscar(@ApiParam(value = "id de uma cidade", example = "10") @PathVariable Long cidadeId) {
         return assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
     }
 
