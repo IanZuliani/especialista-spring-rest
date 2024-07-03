@@ -18,7 +18,6 @@ import com.algaworks.algafood.domain.service.CadastroCidadeService;
 import javax.validation.Valid;
 import java.util.List;
 
-@Api(tags = "Cidades")
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
@@ -35,7 +34,7 @@ public class CidadeController {
     private CidadeInputDisassembler disassembler;
 
     @GetMapping("/{cidadeId}")
-    public CidadeModel buscar(@ApiParam(value = "id de uma cidade", example = "10") @PathVariable Long cidadeId) {
+    public CidadeModel buscar(@PathVariable Long cidadeId) {
         return assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
     }
 
