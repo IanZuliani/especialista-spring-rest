@@ -8,6 +8,7 @@ import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class CidadeController {
         return assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
     }
 
+    @ApiOperation(value = "Lista as cidades")
     @GetMapping
     public List<CidadeModel> listar() {
         return assembler.toCollectionModel(cidadeRepository.findAll());
