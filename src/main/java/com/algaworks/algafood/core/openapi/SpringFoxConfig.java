@@ -8,6 +8,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
@@ -28,7 +29,8 @@ public class SpringFoxConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.algaworks.algafood.api"))
                 .paths(PathSelectors.any())
                 //.paths(PathSelectors.ant("/restaurantes/*"))
-                .build().apiInfo(apiInfo());
+                .build().apiInfo(apiInfo())
+                .tags(new Tag("Cidades", "Gerencia as cidades"));
     }
 
     public ApiInfo apiInfo(){
