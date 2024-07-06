@@ -116,6 +116,12 @@
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>${springfox.version}</version>
 		</dependency>
+
+		<!--Adicionando o Spring Hateos no projeto -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
