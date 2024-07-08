@@ -12,6 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +45,19 @@ public class CidadeController {
 
     @GetMapping("/{cidadeId}")
     public CidadeModel buscar(@PathVariable Long cidadeId) {
-        return assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
+        CidadeModel cidadeModel =  assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
+
+        /**
+         * Adicionando Link por hypermedia, atraves da heranca de RepresentationModel, dentro do Model CidadeModel
+         */
+        cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades/1"));
+        //cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades/1", IanaLinkRelations.SELF));
+        //cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades", IanaLinkRelations.COLLECTION));
+        cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades", "cidades"));
+
+        cidadeModel.getEstado().add(Link.of("http://api.algafood.local:8080/estados/1"));
+
+        return cidadeModel;
     }
 
     @ApiOperation(value = "Lista as cidades")
