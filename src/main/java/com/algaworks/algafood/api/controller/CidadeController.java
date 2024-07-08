@@ -48,6 +48,22 @@ public class CidadeController {
     public CidadeModel buscar(@PathVariable Long cidadeId) {
         CidadeModel cidadeModel =  assembler.toModel(cadastroCidade.buscarOuFalhar(cidadeId));
 
+
+        /**
+         * Vamos criar um link passa o controllador/id
+         * vamos fazer separado
+         * nao vamos montar utilizando o slash, vamos apontar para o metodo utilizando a funcao
+         * methodOn → passamos o Controllador que queremos
+         * COm isso ele cria um proxy do controllador, e com esse proxy podemos chamar os metodos
+         * Mas ele nao executa o metodo, estamos apenas registrando uma chamada nesse metodo para gerar o link
+         * 6. estamos chamando o metodo do proxy e nao do controller, ele vai registrar um historico dele
+         * 7. Para quando fazermos um linkTO para o metodo que chamamos
+         */
+        Link link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
+                .buscar(cidadeModel.getId())).withSelfRel();
+
+        cidadeModel.add(link);
+
         /**
          * Adicionando Link por hypermedia, atraves da heranca de RepresentationModel, dentro do Model CidadeModel
          *
@@ -57,21 +73,28 @@ public class CidadeController {
          *  .withSelfRel()); -> "self" na api
          */
 
-        cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class)
+      /*  cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class)
                 .slash(cidadeModel.getId())
-                .withSelfRel());
+                .withSelfRel());*/
 
         /**
          * Fazendo o LInk para /cidades dinamcamente
          */
-        cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withRel("cidades"));
+
+        cidadeModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
+                .listar()).withRel("cidades"));
+        //cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withRel("cidades"));
 
         /**
          * Fazendo o link para o Estado e o id dele
          */
-        cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(EstadoController.class)
+
+        cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EstadoController.class)
+                .buscar(cidadeModel.getEstado().getId())).withRel("estado"));
+
+        /*cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(EstadoController.class)
                         .slash(cidadeModel.getEstado().getId())
-                        .withRel("estado"));
+                        .withRel("estado"));*/
 
 
         return cidadeModel;
