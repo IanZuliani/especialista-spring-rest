@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,13 +50,29 @@ public class CidadeController {
 
         /**
          * Adicionando Link por hypermedia, atraves da heranca de RepresentationModel, dentro do Model CidadeModel
+         *
+         * WebMvcLinkBuilder que e  uma classe construtor de links dinamicos
+         *
+         * .slash(cidadeModel.getId()) -> /1
+         *  .withSelfRel()); -> "self" na api
          */
-        cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades/1"));
-        //cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades/1", IanaLinkRelations.SELF));
-        //cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades", IanaLinkRelations.COLLECTION));
-        cidadeModel.add(Link.of("http://api.algafood.local:8080/cidades", "cidades"));
 
-        cidadeModel.getEstado().add(Link.of("http://api.algafood.local:8080/estados/1"));
+        cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class)
+                .slash(cidadeModel.getId())
+                .withSelfRel());
+
+        /**
+         * Fazendo o LInk para /cidades dinamcamente
+         */
+        cidadeModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withRel("cidades"));
+
+        /**
+         * Fazendo o link para o Estado e o id dele
+         */
+        cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(EstadoController.class)
+                        .slash(cidadeModel.getEstado().getId())
+                        .withRel("estado"));
+
 
         return cidadeModel;
     }
