@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -37,6 +38,43 @@ public class CidadeController {
     private CadastroCidadeService cadastroCidade;
     @Autowired
     private CidadeRepository cidadeRepository;
+
+    /**
+     * No metodo List de cidades vamos alterar ele para retornar um CollectionModel
+     * @return  CollectionModel<CidadeModel>
+     */
+    @GetMapping
+    public CollectionModel<CidadeModel> listar() {
+        /**
+         * Depos a verificamos que a funcao assembler.toCollectionModel retorna um LIst
+         * Jogamos para uma lista de cidade
+         */
+        List<CidadeModel> cidadesModel =  assembler.toCollectionModel(cidadeRepository.findAll());
+
+        cidadesModel.forEach(cidadeModel -> {
+            cidadeModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
+                    .buscar(cidadeModel.getId())).withSelfRel());
+            cidadeModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
+                    .listar()).withRel("cidades"));
+            cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EstadoController.class)
+                    .buscar(cidadeModel.getEstado().getId())).withRel("estado"));
+        });
+
+
+
+        /**
+         * Depos utilzamos a funca estatica CollectionModel.of para transformar nossa lista de cidades model em uma collection de cidadeModel
+         */
+        CollectionModel<CidadeModel> cidadesCollectionModel = CollectionModel.of(cidadesModel);
+
+        /**
+         * Link para o controllador
+         */
+        cidadesCollectionModel.add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
+
+
+        return cidadesCollectionModel;
+    }
 
     @Autowired
     private CidadeModelAssembler assembler;
@@ -98,12 +136,6 @@ public class CidadeController {
 
 
         return cidadeModel;
-    }
-
-    @ApiOperation(value = "Lista as cidades")
-    @GetMapping
-    public List<CidadeModel> listar() {
-        return assembler.toCollectionModel(cidadeRepository.findAll());
     }
 
     @PostMapping
