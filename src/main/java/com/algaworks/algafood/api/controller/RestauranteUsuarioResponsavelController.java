@@ -5,6 +5,7 @@ import com.algaworks.algafood.api.model.UsuarioModel;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +23,12 @@ public class RestauranteUsuarioResponsavelController {
     @GetMapping
     public CollectionModel<UsuarioModel> findByRestauranteId(@PathVariable Long restauranteId) {
         var restaurante = restauranteService.buscarOuFalhar(restauranteId);
-        return usuarioAssembler.toCollectionModel(restaurante.getResponsaveis());
+        return usuarioAssembler.toCollectionModel(restaurante.getResponsaveis())
+                .removeLinks()
+                .add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
+                        RestauranteUsuarioResponsavelController.class).findByRestauranteId(restauranteId))
+                        .withSelfRel());
     }
-
-
-   /* @GetMapping
-    public List<UsuarioModel> findByRestauranteId(@PathVariable Long restauranteId){
-        var restaurante =  restauranteService.buscarOuFalhar(restauranteId);
-        return usuarioAssembler.toCollectionModel(restaurante.getResponsaveis());
-
-    }*/
 
     @DeleteMapping("/{usuarioId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
