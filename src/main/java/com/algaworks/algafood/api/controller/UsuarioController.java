@@ -9,6 +9,7 @@ import com.algaworks.algafood.api.model.input.UsuarioInput;
 import com.algaworks.algafood.domain.repository.UsuarioRepository;
 import com.algaworks.algafood.domain.service.CadastroUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,8 @@ public class UsuarioController {
 
     //listar
     @GetMapping
-    public List<UsuarioModel> list(){
+    public CollectionModel<UsuarioModel> list(){
+
         return assembler.toCollectionModel(repository.findAll());
     }
     //buscar

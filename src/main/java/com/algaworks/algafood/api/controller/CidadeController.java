@@ -40,6 +40,12 @@ public class CidadeController {
     @Autowired
     private CidadeRepository cidadeRepository;
 
+    @Autowired
+    private CidadeModelAssembler assembler;
+
+    @Autowired
+    private CidadeInputDisassembler disassembler;
+
     /**
      * No metodo List de cidades vamos alterar ele para retornar um CollectionModel
      * @return  CollectionModel<CidadeModel>
@@ -52,12 +58,6 @@ public class CidadeController {
         return assembler.toCollectionModel(todasCidades);
 
     }
-
-    @Autowired
-    private CidadeModelAssembler assembler;
-
-    @Autowired
-    private CidadeInputDisassembler disassembler;
 
     @GetMapping("/{cidadeId}")
     public CidadeModel buscar(@PathVariable Long cidadeId) {
