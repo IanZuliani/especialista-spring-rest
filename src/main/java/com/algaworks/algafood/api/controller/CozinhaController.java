@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,16 +45,36 @@ public class CozinhaController {
     @Autowired
     private CozinhaInputDisassembler cozinhaInputDisassembler;
 
+    /**
+     * Implementa RepresentationModelAssemble
+     * oU sseja e um montador de Representation Mode
+     *
+     */
+    @Autowired
+    private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
+
     @GetMapping
-    public Page<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
+    public PagedModel<CozinhaModel> listar(@PageableDefault(size = 10) Pageable pageable) {
         Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
 
-        List<CozinhaModel> cozinhasModel =  cozinhaModelAssembler.toCollectionModel(cozinhasPage.getContent());
+        /**
+         *14. Vamos utilizar `pagedResourcesAssembler`, para converter `Page<Cozinha>`
+         * 15. Para um `PagedModel<CozinhaModel>`
+         * 16. Porem para fazer a conversao de cozinha para cozinhaModel temos que utilizar o `cozinhaModelAssembler`
+         * 17. O `pagedResourcesAssembler` vai usar a classe `cozinhaModelAssembler` para converter cozinha para `cozinhaModelAssembler`
+         * 18. Depos vai converter Page para PagedModel, utilizanco cozinhaModelAssembler
+         */
+        PagedModel<CozinhaModel> cozinhasPagedModel = pagedResourcesAssembler
+                .toModel(cozinhasPage, cozinhaModelAssembler);
+
+        return cozinhasPagedModel;
+
+     /*   List<CozinhaModel> cozinhasModel =  cozinhaModelAssembler.toCollectionModel(cozinhasPage.getContent());
 
         Page<CozinhaModel> cozinhaModelPage = new PageImpl<>(cozinhasModel, pageable,
                 cozinhasPage.getTotalElements());
 
-        return cozinhaModelPage;
+        return cozinhaModelPage;*/
     }
 
     @GetMapping("/{cozinhaId}")
