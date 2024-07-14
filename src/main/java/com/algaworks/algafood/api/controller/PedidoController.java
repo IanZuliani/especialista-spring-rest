@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,9 +47,21 @@ public class PedidoController {
     @Autowired
     private PedidoRepository repository;
 
-
+    @Autowired
+    private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
     @GetMapping
+    public PagedModel<PedidoResumoModel> pesquisar(PedidoFilter filtro,
+                                                   @PageableDefault(size = 10) Pageable pageable) {
+        pageable = traduzirPageable(pageable);
+
+        Page<Pedido> pedidosPage = repository.findAll(
+                PedidoSpecs.usandoFiltro(filtro), pageable);
+
+        return pagedResourcesAssembler.toModel(pedidosPage, pedidoResumoModelAssemble);
+    }
+
+/*    @GetMapping
     public Page<PedidoResumoModel> pesquisar(PedidoFilter filter, Pageable pageable){
         pageable = traduzirPegeable(pageable);
 
@@ -59,7 +74,7 @@ public class PedidoController {
                 pedidoResumoModels, pageable, pedidos.getTotalElements());
 
         return pedidoResumoModelsPage;
-    }
+    }*/
 
     @GetMapping("/{id}")
     public PedidoModel findById(@PathVariable String id){
@@ -84,7 +99,7 @@ public class PedidoController {
         }
     }
 
-    public Pageable traduzirPegeable(Pageable apiPageable){
+    public Pageable traduzirPageable(Pageable apiPageable){
         var mapeamento = ImmutableMap.of(
                 "codigo", "codigo",
                 "restaurante.nome", "restaurante.nome",
