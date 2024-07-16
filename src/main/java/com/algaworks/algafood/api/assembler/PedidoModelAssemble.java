@@ -5,7 +5,7 @@ import com.algaworks.algafood.api.model.PedidoModel;
 import com.algaworks.algafood.domain.model.Pedido;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,47 @@ public class PedidoModelAssemble extends RepresentationModelAssemblerSupport<Ped
         PedidoModel pedidoModel = createModelWithId(pedido.getId(), pedido);
         modelMapper.map(pedido, pedidoModel);
 
-        pedidoModel.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withRel("pedidos"));
+       // pedidoModel.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withRel("pedidos"));
+
+        /**
+         * Adicionando links com template variables
+         * 1. vamos criar novamente o link, mas dessa vez vamos utilizar uma classe do hateos para fazer
+         * essa classe vai ajudar a gente a criar uma URI com template Variables
+         *
+         * Vamos utilizar o metodo of -> UriTemplate.of()
+         * Esse metodo vai receber dois parametros.
+         * 1 a string da url → http://api.algafood.local:8080/pedidos
+         * 2 e um template variabels que vamos criar
+         */
+
+        /**
+         * Vamos criar uma lista de variaveis para passar como parametro na funcao UriTemplate.of
+         */
+        TemplateVariables pageVariables = new TemplateVariables(
+                /**
+                 * TemplateVariables -> lista de TemplateVariable
+                 * Podemos criar varios,
+                 * O primeiro parametro e o nome
+                 * o segundo parametro e o tipo da variavel
+                 * Vamos fala que e um Request Param
+                 */
+            new TemplateVariable("page", TemplateVariable.VariableType.REQUEST_PARAM),
+            new TemplateVariable("size", TemplateVariable.VariableType.REQUEST_PARAM),
+            new TemplateVariable("sort", TemplateVariable.VariableType.REQUEST_PARAM));
+
+        TemplateVariables filtroVariables = new TemplateVariables(
+                new TemplateVariable("ClienteId", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("restauranteId", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoInicio", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoFim", TemplateVariable.VariableType.REQUEST_PARAM));
+
+        /**
+         * Pegando a url do pedido dinamicamente
+         */
+        String pedidoUrl = WebMvcLinkBuilder.linkTo(PedidoController.class).toUri().toString();
+
+        pedidoModel.add(Link.of(UriTemplate.of(pedidoUrl, pageVariables.concat(filtroVariables)), "pedidos"));
+
 
         pedidoModel.getRestaurante().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class)
                 .buscar(pedido.getRestaurante().getId())).withSelfRel());
