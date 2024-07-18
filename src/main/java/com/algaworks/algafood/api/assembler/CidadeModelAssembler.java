@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.assembler;
 
+import com.algaworks.algafood.api.AlgaLinks;
 import com.algaworks.algafood.api.controller.CidadeController;
 import com.algaworks.algafood.api.controller.EstadoController;
 import com.algaworks.algafood.api.model.CidadeModel;
@@ -27,6 +28,9 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private AlgaLinks algaLinks;
+
     /**
      * Temos que criar um construtor ja que extendemos RepresentationModelAssemblerSupport
      * Temos que passar dois parametros
@@ -44,28 +48,14 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
      * @return
      */
     @Override
-    public CidadeModel toModel(Cidade cidade){
-
-        /**
-         * Uma outra maneira de criar uma instancia de cidadeModel, com o id da cidade, e gerar links automatico
-         */
+    public CidadeModel toModel(Cidade cidade) {
         CidadeModel cidadeModel = createModelWithId(cidade.getId(), cidade);
-        /**
-         * Mas temos que passar o modelMapper tambem
-         * Vamos fala para ele copiar a instancia de cidade para cidaedModel
-         * com isso reduzimos as linhas abaixo
-         */
+
         modelMapper.map(cidade, cidadeModel);
 
-        //CidadeModel cidadeModel =  modelMapper.map(cidade, CidadeModel.class);
+        cidadeModel.add(algaLinks.linkToCidades("cidades"));
 
-       /* cidadeModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
-                .buscar(cidadeModel.getId())).withSelfRel());*/
-
-        cidadeModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CidadeController.class)
-                .listar()).withRel("cidades"));
-        cidadeModel.getEstado().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(EstadoController.class)
-                .buscar(cidadeModel.getEstado().getId())).withRel("estado"));
+        cidadeModel.getEstado().add(algaLinks.linkToEstado(cidadeModel.getEstado().getId()));
 
         return cidadeModel;
     }

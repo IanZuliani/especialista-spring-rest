@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.assembler;
 
+import com.algaworks.algafood.api.AlgaLinks;
 import com.algaworks.algafood.api.controller.PedidoController;
 import com.algaworks.algafood.api.controller.RestauranteController;
 import com.algaworks.algafood.api.controller.UsuarioController;
@@ -21,23 +22,24 @@ public class PedidoResumoModelAssemble  extends RepresentationModelAssemblerSupp
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private AlgaLinks algaLinks;
 
     public PedidoResumoModelAssemble() {
         super(PedidoController.class, PedidoResumoModel.class);
     }
 
+    @Override
     public PedidoResumoModel toModel(Pedido pedido) {
-        //return modelMapper.map(pedido, PedidoResumoModel.class);
         PedidoResumoModel pedidoModel = createModelWithId(pedido.getCodigo(), pedido);
         modelMapper.map(pedido, pedidoModel);
 
-        pedidoModel.add(WebMvcLinkBuilder.linkTo(PedidoController.class).withRel("pedidos"));
+        pedidoModel.add(algaLinks.linkToPedidos());
 
-        pedidoModel.getRestaurante().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class)
-                .buscar(pedido.getRestaurante().getId())).withSelfRel());
+        pedidoModel.getRestaurante().add(
+                algaLinks.linkToRestaurante(pedido.getRestaurante().getId()));
 
-        pedidoModel.getCliente().add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UsuarioController.class)
-                .findById(pedido.getCliente().getId())).withSelfRel());
+        pedidoModel.getCliente().add(algaLinks.linkToUsuario(pedido.getCliente().getId()));
 
         return pedidoModel;
     }
