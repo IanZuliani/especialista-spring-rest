@@ -49,6 +49,27 @@ public class AlgaLinks {
         return Link.of(UriTemplate.of(pedidoUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), "pedidos");
     }
 
+    public Link linkToConfirmacaoPedido(String codigoPedido, String rel){
+        /**
+         * Vamos criar um metodo para criar o link de confirmacao de Pedido, para adicionarmos na resposta
+         */
+        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).confirmar(codigoPedido)).withRel(rel);
+    }
+
+    public Link linkToEntregaPedido(String codigoPedido, String rel){
+        /**
+         * Vamos criar um metodo para o link de Entrega de Pedido, para adicionarmos na resposta
+         */
+        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).entregar(codigoPedido)).withRel(rel);
+    }
+
+    public Link linkToCancelamentoPedido(String codigoPedido, String rel){
+        /**
+         * Vamos criar um metodo para o link de cancelar de Pedido, para adicionarmos na resposta
+         */
+        return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(FluxoPedidoController.class).cancelar(codigoPedido)).withRel(rel);
+    }
+
     public Link linkToRestaurante(Long restauranteId, String rel) {
         return WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(RestauranteController.class)
                 .buscar(restauranteId)).withRel(rel);
