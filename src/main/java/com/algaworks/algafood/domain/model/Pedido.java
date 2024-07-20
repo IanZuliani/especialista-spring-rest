@@ -10,7 +10,6 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +119,27 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
     }
 
 
+    /**
+     * Metodos que verifica se o pedido pode ser confirmado entegue ou cancelado.
+     * @return
+     */
+    public boolean podeSerConfirmado(){
+        return getStatus().podeAlterarPara(StatusPedido.CONFIRMADO);
+    }
+
+    public boolean podeSerEntregue(){
+        return getStatus().podeAlterarPara(StatusPedido.ENTREGUE);
+    }
+
+    public boolean podeSerCancelado(){
+        return getStatus().podeAlterarPara(StatusPedido.CANCELADO);
+    }
+
     @PrePersist
     private void gerarCodigo(){
         setCodigo(UUID.randomUUID().toString());
     }
    }
+
+
 
