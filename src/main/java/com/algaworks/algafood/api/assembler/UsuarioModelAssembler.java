@@ -47,10 +47,15 @@ public class UsuarioModelAssembler extends RepresentationModelAssemblerSupport<U
         return usuarioModel;
     }
 
-    @Override
+  /*  @Override
     public CollectionModel<UsuarioModel> toCollectionModel(Iterable<? extends Usuario> entities) {
         return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(UsuarioController.class).withSelfRel());
-    }
+    }*/
+  @Override
+  public CollectionModel<UsuarioModel> toCollectionModel(Iterable<? extends Usuario> entities) {
+      return super.toCollectionModel(entities)
+              .add(algaLinks.linkToUsuarios());
+  }
 
 
     /*    public List<UsuarioModel> toCollectionModel(Collection<Usuario> usuarios){

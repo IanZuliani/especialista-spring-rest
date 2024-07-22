@@ -29,7 +29,7 @@ public class RestauranteUsuarioResponsavelController {
         var restaurante = restauranteService.buscarOuFalhar(restauranteId);
         return usuarioModelAssembler.toCollectionModel(restaurante.getResponsaveis())
                 .removeLinks()
-                .add(algaLinks.linkToResponsaveisRestaurante(restauranteId));
+                .add(algaLinks.linkToRestauranteResponsaveis(restauranteId));
     }
 
     @DeleteMapping("/{usuarioId}")

@@ -65,9 +65,14 @@ public class CidadeModelAssembler extends RepresentationModelAssemblerSupport<Ci
      * Para isso temos que sobreescrever o metodo toCollectionModel para adicionar a funcao que faz  o LINK
      * Utilizando .add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
      */
-    @Override
+   /* @Override
     public CollectionModel<CidadeModel> toCollectionModel(Iterable<? extends Cidade> entities) {
         return super.toCollectionModel(entities).add(WebMvcLinkBuilder.linkTo(CidadeController.class).withSelfRel());
+    }*/
+    @Override
+    public CollectionModel<CidadeModel> toCollectionModel(Iterable<? extends Cidade> entities) {
+        return super.toCollectionModel(entities)
+                .add(algaLinks.linkToCidades());
     }
 
     /**
