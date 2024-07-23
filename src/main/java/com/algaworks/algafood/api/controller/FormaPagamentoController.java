@@ -8,6 +8,7 @@ import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.repository.FormaPagamentoRepository;
 import com.algaworks.algafood.domain.service.FormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class FormaPagamentoController {
     private FormaPagamentoDisassemble disassemble;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoModel>> findAll(ServletWebRequest request){
+    public ResponseEntity<CollectionModel<FormaPagamentoModel>> findAll(ServletWebRequest request){
 
         /**
          * Desativando o ShallowEtagHeaderFilter para essa requisicao,
@@ -65,8 +66,10 @@ public class FormaPagamentoController {
 
         List<FormaPagamento> todasFormasPagamentos = repository.findAll();
 
-        List<FormaPagamentoModel> formaPagamentoModels =  assemble
-                .toCollectionModel(todasFormasPagamentos);
+     /*   List<FormaPagamentoModel> formaPagamentoModels =  assemble
+                .toCollectionModel(todasFormasPagamentos);*/
+        CollectionModel<FormaPagamentoModel> formasPagamentosModel =
+                assemble.toCollectionModel(todasFormasPagamentos);
 
         /**
          * Criando a resposta cacheada para que o navegador do cliente cacheie ela por 10 segundos
@@ -80,7 +83,7 @@ public class FormaPagamentoController {
                 //.cacheControl(CacheControl.noCache())
                 //.cacheControl(CacheControl.noStore())
                 .eTag(eTag)
-                .body(formaPagamentoModels);
+                .body(formasPagamentosModel);
 
     }
 
