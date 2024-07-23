@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlgaLinks {
 
+    public static final TemplateVariables PROJECAO_VARIABLES = new TemplateVariables(
+            new TemplateVariable("projecao", TemplateVariable.VariableType.REQUEST_PARAM));
     /**
      *   * Adicionando links com template variables
      * 1. vamos criar novamente o link, mas dessa vez vamos utilizar uma classe do hateos para fazer
@@ -30,7 +32,7 @@ public class AlgaLinks {
             new TemplateVariable("size", TemplateVariable.VariableType.REQUEST_PARAM),
             new TemplateVariable("sort", TemplateVariable.VariableType.REQUEST_PARAM));
 
-    public Link linkToPedidos(){
+    public Link linkToPedidos(String rel){
         /**
          * Vamos criar uma lista de variaveis para passar como parametro na funcao UriTemplate.of
          * Essas variaveis abaixo nao pretendemos utilizar em outros metodos entao nao vamos alterar elas
@@ -46,7 +48,7 @@ public class AlgaLinks {
          */
         String pedidoUrl = WebMvcLinkBuilder.linkTo(PedidoController.class).toUri().toString();
 
-        return Link.of(UriTemplate.of(pedidoUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), "pedidos");
+        return Link.of(UriTemplate.of(pedidoUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), rel);
     }
 
     public Link linkToConfirmacaoPedido(String codigoPedido, String rel){
@@ -176,7 +178,8 @@ public class AlgaLinks {
     }
 
     public Link linkToRestaurantes(String rel) {
-        return WebMvcLinkBuilder.linkTo(RestauranteController.class).withRel(rel);
+        String restaurantesUrl = WebMvcLinkBuilder.linkTo(RestauranteController.class).toUri().toString();
+        return Link.of(UriTemplate.of(restaurantesUrl, PROJECAO_VARIABLES), rel);
     }
 
     public Link linkToRestaurantes() {
