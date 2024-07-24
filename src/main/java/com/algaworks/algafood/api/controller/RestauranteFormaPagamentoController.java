@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/formas-pagamento")
 public class RestauranteFormaPagamentoController {
@@ -32,7 +30,8 @@ public class RestauranteFormaPagamentoController {
 
         CollectionModel<FormaPagamentoModel> formasPagamentoModel = assemble.toCollectionModel(restaurante.getFormasPagamento())
                 .removeLinks()
-                .add(algaLinks.linkToRestauranteFormasPagamento(restauranteId));
+                .add(algaLinks.linkToRestauranteFormasPagamento(restauranteId))
+                .add(algaLinks.linkToRestauranteFormasPagamentoAsossiacao(restauranteId, "associar"));
 
         formasPagamentoModel.getContent().forEach(formaPagamentoModel -> {
             formaPagamentoModel.add(algaLinks.linkToRestauranteFormasPagamentoDesassociacao(restauranteId,
@@ -57,7 +56,8 @@ public class RestauranteFormaPagamentoController {
 
     @PutMapping("/{idFormaPagamento}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void asossiar(@PathVariable Long restauranteId,@PathVariable Long idFormaPagamento){
+    public ResponseEntity<Void> associar(@PathVariable Long restauranteId, @PathVariable Long idFormaPagamento){
         cadastroRestaurante.asossiarFormaPagamento(restauranteId, idFormaPagamento);
+        return ResponseEntity.noContent().build();
     }
 }
