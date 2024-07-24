@@ -9,12 +9,13 @@ import com.algaworks.algafood.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurantes/{id}/formas-pagamento")
+@RequestMapping("/restaurantes/{restauranteId}/formas-pagamento")
 public class RestauranteFormaPagamentoController {
 
     @Autowired
@@ -29,9 +30,16 @@ public class RestauranteFormaPagamentoController {
     public CollectionModel<FormaPagamentoModel> listar(@PathVariable Long restauranteId) {
         Restaurante restaurante = cadastroRestaurante.buscarOuFalhar(restauranteId);
 
-        return assemble.toCollectionModel(restaurante.getFormasPagamento())
+        CollectionModel<FormaPagamentoModel> formasPagamentoModel = assemble.toCollectionModel(restaurante.getFormasPagamento())
                 .removeLinks()
                 .add(algaLinks.linkToRestauranteFormasPagamento(restauranteId));
+
+        formasPagamentoModel.getContent().forEach(formaPagamentoModel -> {
+            formaPagamentoModel.add(algaLinks.linkToRestauranteFormasPagamentoDesassociacao(restauranteId,
+                    formaPagamentoModel.getId(), "desassociar"));
+        });
+
+        return formasPagamentoModel;
     }
 
 /*    @GetMapping
@@ -42,13 +50,14 @@ public class RestauranteFormaPagamentoController {
 
     @DeleteMapping("/{idFormaPagamento}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void desassociar(@PathVariable Long id,@PathVariable Long idFormaPagamento){
-        cadastroRestaurante.desassociarFormaPAgamento(id, idFormaPagamento);
+    public ResponseEntity<Void> desassociar(@PathVariable Long restauranteId, @PathVariable Long idFormaPagamento){
+        cadastroRestaurante.desassociarFormaPAgamento(restauranteId, idFormaPagamento);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{idFormaPagamento}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void asossiar(@PathVariable Long id,@PathVariable Long idFormaPagamento){
-        cadastroRestaurante.asossiarFormaPagamento(id, idFormaPagamento);
+    public void asossiar(@PathVariable Long restauranteId,@PathVariable Long idFormaPagamento){
+        cadastroRestaurante.asossiarFormaPagamento(restauranteId, idFormaPagamento);
     }
 }
