@@ -24,6 +24,8 @@ public class RootEntryPointController {
         rootEntryPointModel.add(algaLinks.linkToRestaurantes("restaurantes"));
         rootEntryPointModel.add(algaLinks.linkToGrupos("grupos"));
         rootEntryPointModel.add(algaLinks.linkToUsuarios("usuarios"));
+        rootEntryPointModel.add(algaLinks.linkToEstatisticas("estatisticas"));
+
 
         return rootEntryPointModel;
     }
