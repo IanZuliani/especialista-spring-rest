@@ -8,6 +8,7 @@ import com.algaworks.algafood.domain.model.Grupo;
 import com.algaworks.algafood.domain.repository.GrupoRepository;
 import com.algaworks.algafood.domain.service.CadastroGrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +30,16 @@ public class GrupoController {
 
     //listar
     @GetMapping
+    public CollectionModel<GrupoModel> listar() {
+        List<Grupo> todosGrupos = repository.findAll();
+
+        return assemble.toCollectionModel(todosGrupos);
+    }
+   /* @GetMapping
     public List<GrupoModel> findAll(){
         return assemble.toCollectionModel(repository.findAll());
-    }
+    }*/
+
 
     //buscar id
     @GetMapping("/{id}")
