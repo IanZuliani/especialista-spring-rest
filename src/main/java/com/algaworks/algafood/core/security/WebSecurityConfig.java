@@ -10,8 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
-@EnableWebSecurity //Abilita webSecurity
+/*@Configuration
+@EnableWebSecurity *///Abilita webSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
